@@ -8,11 +8,27 @@ st.set_page_config(layout="wide")
 
 st.title("📊 Dashboard Phân Tích Khách Hàng")
 
-uploaded_file = st.file_uploader("Upload file Excel", type=["xlsx"])
+uploaded_file = st.file_uploader(
+    "Upload file dữ liệu",
+    type=["xlsx", "csv", "xlsb"]
+)
 
 @st.cache_data
 def load_data(file):
-    return pd.read_excel(file)
+    file_name = file.name.lower()
+
+    if file_name.endswith(".csv"):
+        return pd.read_csv(file)
+
+    elif file_name.endswith(".xlsx"):
+        return pd.read_excel(file)
+
+    elif file_name.endswith(".xlsb"):
+        return pd.read_excel(file, engine="pyxlsb")
+
+    else:
+        st.error("❌ Định dạng file không hỗ trợ")
+        return None
 
 if uploaded_file is not None:
     df = load_data(uploaded_file).copy()
