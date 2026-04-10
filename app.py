@@ -3,7 +3,7 @@ import pandas as pd
 
 st.set_page_config(layout="wide")
 
-st.title("📊 Dashboard Trạng Thái Khách Hàng")
+st.title("📊 Dashboard Khách Hàng (Active + New)")
 
 uploaded_file = st.file_uploader(
     "Upload file dữ liệu",
@@ -34,8 +34,7 @@ def find_column(df, keywords):
 
 def convert_excel_serial_to_date(series):
     numeric_series = pd.to_numeric(series, errors="coerce")
-    dates = pd.to_datetime("1899-12-30") + pd.to_timedelta(numeric_series, unit="D")
-    return dates
+    return pd.to_datetime("1899-12-30") + pd.to_timedelta(numeric_series, unit="D")
 
 
 if uploaded_file is not None:
@@ -45,53 +44,49 @@ if uploaded_file is not None:
         st.error("❌ Không đọc được file")
         st.stop()
 
-    # Chuẩn hóa tên cột
+    # =========================
+    # CHUẨN HÓA CỘT
+    # =========================
     df.columns = [str(c).strip().upper() for c in df.columns]
 
-    # Tìm các cột quan trọng
     col_status = find_column(df, ["TRANGTHAI", "STATUS"])
-    col_customer = find_column(df, ["MA_KHACHHANG", "CIF", "CUSTOMER"])
-    col_manager = find_column(df, ["CANBO_QUANLY", "CANBO", "CBQL"])
-    col_open_date = find_column(df, ["NGAYMOCIF", "NGAY_MO_CIF"])
-    col_open_year = find_column(df, ["NAMMOCIF", "NAM_MO_CIF", "YEAR_MOCIF", "YEAR"])
+    col_customer = find_column(df, ["MA_KHACHHANG", "CIF"])
+    col_manager = find_column(df, ["CANBO_QUANLY", "CBQL"])
+    col_open_date = find_column(df, ["NGAYMOCIF"])
+    col_open_year = find_column(df, ["NAMMOCIF"])
 
     if col_status is None:
-        st.error("❌ Không tìm thấy cột trạng thái khách hàng")
+        st.error("❌ Không tìm thấy cột trạng thái")
         st.stop()
 
-    # Chuẩn hóa trạng thái
     df[col_status] = df[col_status].astype("string").str.strip()
 
     # =========================
-    # KPI TRẠNG THÁI
+    # KPI
     # =========================
+    st.subheader("📌 Tổng quan")
+
     total = len(df)
     active = (df[col_status] == "Active").sum()
     new = (df[col_status] == "New").sum()
-    frozen = (df[col_status] == "Frozen").sum()
-    dormant = (df[col_status] == "Dormant").sum()
-    null_count = df[col_status].isna().sum() + (df[col_status].astype(str).str.upper() == "NAN").sum()
 
-    st.subheader("📌 Tổng quan khách hàng")
-
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    c1, c2, c3 = st.columns(3)
     c1.metric("Tổng KH", f"{total:,}")
     c2.metric("Active", f"{active:,}")
     c3.metric("New", f"{new:,}")
-    c4.metric("Frozen", f"{frozen:,}")
-    c5.metric("Dormant", f"{dormant:,}")
-    c6.metric("NaN", f"{null_count:,}")
 
     # =========================
-    # LOGIC CHĂM SÓC (CHỈ ACTIVE + NEW)
+    # CHỈ LẤY ACTIVE + NEW
+    # =========================
+    df_filtered = df[df[col_status].isin(["Active", "New"])].copy()
+
+    # =========================
+    # CHĂM SÓC KHÁCH HÀNG
     # =========================
     col_hdv = "HDVKKH_BQ"
 
-    if col_hdv in df.columns:
-
-        df_cs = df[df[col_status].isin(["Active", "New"])].copy()
-
-        df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
+    if col_hdv in df_filtered.columns:
+        df_filtered[col_hdv] = pd.to_numeric(df_filtered[col_hdv], errors="coerce")
 
         def classify_care(x):
             if pd.isna(x):
@@ -105,81 +100,75 @@ if uploaded_file is not None:
             else:
                 return "Chăm sóc cấp 3"
 
-        df_cs["CHAM_SOC"] = df_cs[col_hdv].apply(classify_care)
+        df_filtered["CHAM_SOC"] = df_filtered[col_hdv].apply(classify_care)
 
         # KPI chăm sóc
-        st.subheader("🎯 Phân loại chăm sóc khách hàng")
+        st.subheader("🎯 Phân loại chăm sóc")
 
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Không cần chăm", f"{(df_cs['CHAM_SOC']=='Không cần chăm').sum():,}")
-        c2.metric("Cấp 1", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 1').sum():,}")
-        c3.metric("Cấp 2", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 2').sum():,}")
-        c4.metric("Cấp 3", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 3').sum():,}")
-
-    # =========================
-    # LỌC DỮ LIỆU
-    # =========================
-    st.subheader("🎯 Lọc dữ liệu")
-    option = st.selectbox("Chọn loại khách", ["All", "Active", "New"])
-
-    df_filtered = df.copy()
-    if option != "All":
-        df_filtered = df_filtered[df_filtered[col_status] == option]
+        c1.metric("Không cần", f"{(df_filtered['CHAM_SOC']=='Không cần chăm').sum():,}")
+        c2.metric("Cấp 1", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 1').sum():,}")
+        c3.metric("Cấp 2", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 2').sum():,}")
+        c4.metric("Cấp 3", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 3').sum():,}")
 
     # =========================
     # FORMAT HIỂN THỊ
     # =========================
     df_display = df_filtered.copy()
 
-    # mã khách
-    if col_customer is not None:
-        customer_numeric = pd.to_numeric(df_display[col_customer], errors="coerce")
-        df_display[col_customer] = customer_numeric.apply(
-            lambda x: str(int(x)) if pd.notnull(x) else ""
-        )
+    # mã KH
+    if col_customer:
+        df_display[col_customer] = pd.to_numeric(df_display[col_customer], errors="coerce")\
+            .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
 
     # cán bộ
-    if col_manager is not None:
-        manager_numeric = pd.to_numeric(df_display[col_manager], errors="coerce")
-        df_display[col_manager] = manager_numeric.apply(
-            lambda x: str(int(x)) if pd.notnull(x) else ""
-        )
+    if col_manager:
+        df_display[col_manager] = pd.to_numeric(df_display[col_manager], errors="coerce")\
+            .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
 
     # ngày
-    if col_open_date is not None:
-        converted_dates = convert_excel_serial_to_date(df_display[col_open_date])
-        df_display[col_open_date] = converted_dates.dt.strftime("%Y-%m-%d")
-        df_display[col_open_date] = df_display[col_open_date].fillna("")
+    if col_open_date:
+        df_display[col_open_date] = convert_excel_serial_to_date(df_display[col_open_date])\
+            .dt.strftime("%Y-%m-%d")
 
     # năm
-    if col_open_year is not None:
-        year_numeric = pd.to_numeric(df_display[col_open_year], errors="coerce")
-        df_display[col_open_year] = year_numeric.apply(
-            lambda x: str(int(x)) if pd.notnull(x) else ""
-        )
+    if col_open_year:
+        df_display[col_open_year] = pd.to_numeric(df_display[col_open_year], errors="coerce")\
+            .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
 
-    # format số (trừ các cột mã)
-    excluded_cols = {col_customer, col_manager, col_open_date, col_open_year}
+    # format số
+    exclude = {col_customer, col_manager, col_open_date, col_open_year}
+    num_cols = df_filtered.select_dtypes(include=["number"]).columns
 
-    numeric_cols = df_filtered.select_dtypes(include=["number"]).columns
-
-    for col in numeric_cols:
-        if col not in excluded_cols:
-            df_display[col] = pd.to_numeric(df_filtered[col], errors="coerce").apply(
-                lambda x: f"{x:,.0f}" if pd.notnull(x) else ""
-            )
+    for col in num_cols:
+        if col not in exclude:
+            df_display[col] = pd.to_numeric(df_filtered[col], errors="coerce")\
+                .apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else "")
 
     # =========================
     # HIỂN THỊ
     # =========================
-    st.subheader("📋 Danh sách khách hàng (FULL DATA)")
+    st.subheader("📋 Khách hàng Active & New")
 
-    st.dataframe(
-        df_display,
-        use_container_width=True,
-        height=650,
-        hide_index=True
-    )
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("🟢 Active")
+        st.dataframe(
+            df_display[df_display[col_status] == "Active"],
+            hide_index=True,
+            use_container_width=True,
+            height=500
+        )
+
+    with col2:
+        st.write("🆕 New")
+        st.dataframe(
+            df_display[df_display[col_status] == "New"],
+            hide_index=True,
+            use_container_width=True,
+            height=500
+        )
 
 else:
     st.info("👉 Upload file để bắt đầu")
