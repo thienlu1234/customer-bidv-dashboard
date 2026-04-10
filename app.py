@@ -110,13 +110,13 @@ if uploaded_file is not None:
         df_filtered["CHAM_SOC"] = df_filtered[col_hdv].apply(classify_care)
 
         # KPI chăm sóc
-        st.subheader("🎯 Phân loại chăm sóc")
+        st.subheader("🎯 Phân loại chăm sóc theo HDVKKH_BQ")
 
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Không cần", f"{(df_filtered['CHAM_SOC']=='Không cần chăm').sum():,}")
-        c2.metric("Cấp 1", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 1').sum():,}")
-        c3.metric("Cấp 2", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 2').sum():,}")
-        c4.metric("Cấp 3", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 3').sum():,}")
+        c1.metric("Dưới 5TR", f"{(df_filtered['CHAM_SOC']=='Không cần chăm').sum():,}")
+        c2.metric("Từ 5TR đến 20TR", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 1').sum():,}")
+        c3.metric("Từ 20TR đến 50TR", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 2').sum():,}")
+        c4.metric("Trên 50TR", f"{(df_filtered['CHAM_SOC']=='Chăm sóc cấp 3').sum():,}")
 
     # =========================
     # FORMAT HIỂN THỊ
