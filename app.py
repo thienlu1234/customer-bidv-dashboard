@@ -62,7 +62,9 @@ if uploaded_file is not None:
     # Chuẩn hóa trạng thái
     df[col_status] = df[col_status].astype("string").str.strip()
 
-    # Tính KPI trạng thái
+    # =========================
+    # KPI TRẠNG THÁI
+    # =========================
     total = len(df)
     active = (df[col_status] == "Active").sum()
     new = (df[col_status] == "New").sum()
@@ -80,7 +82,43 @@ if uploaded_file is not None:
     c5.metric("Dormant", f"{dormant:,}")
     c6.metric("NaN", f"{null_count:,}")
 
-    # Lọc dữ liệu
+    # =========================
+    # LOGIC CHĂM SÓC (CHỈ ACTIVE + NEW)
+    # =========================
+    col_hdv = "HDVKKH_BQ"
+
+    if col_hdv in df.columns:
+
+        df_cs = df[df[col_status].isin(["Active", "New"])].copy()
+
+        df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
+
+        def classify_care(x):
+            if pd.isna(x):
+                return "Không xác định"
+            elif x <= 5_000_000:
+                return "Không cần chăm"
+            elif x <= 20_000_000:
+                return "Chăm sóc cấp 1"
+            elif x <= 50_000_000:
+                return "Chăm sóc cấp 2"
+            else:
+                return "Chăm sóc cấp 3"
+
+        df_cs["CHAM_SOC"] = df_cs[col_hdv].apply(classify_care)
+
+        # KPI chăm sóc
+        st.subheader("🎯 Phân loại chăm sóc khách hàng")
+
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Không cần chăm", f"{(df_cs['CHAM_SOC']=='Không cần chăm').sum():,}")
+        c2.metric("Cấp 1", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 1').sum():,}")
+        c3.metric("Cấp 2", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 2').sum():,}")
+        c4.metric("Cấp 3", f"{(df_cs['CHAM_SOC']=='Chăm sóc cấp 3').sum():,}")
+
+    # =========================
+    # LỌC DỮ LIỆU
+    # =========================
     st.subheader("🎯 Lọc dữ liệu")
     option = st.selectbox("Chọn loại khách", ["All", "Active", "New"])
 
@@ -88,43 +126,40 @@ if uploaded_file is not None:
     if option != "All":
         df_filtered = df_filtered[df_filtered[col_status] == option]
 
-    # Bản để hiển thị
+    # =========================
+    # FORMAT HIỂN THỊ
+    # =========================
     df_display = df_filtered.copy()
 
-    # 1) Cột mã khách hàng: bỏ dấu phẩy, giữ dạng mã
+    # mã khách
     if col_customer is not None:
         customer_numeric = pd.to_numeric(df_display[col_customer], errors="coerce")
         df_display[col_customer] = customer_numeric.apply(
             lambda x: str(int(x)) if pd.notnull(x) else ""
         )
 
-    # 2) Cột cán bộ quản lý: bỏ dấu phẩy, giữ dạng mã
+    # cán bộ
     if col_manager is not None:
         manager_numeric = pd.to_numeric(df_display[col_manager], errors="coerce")
         df_display[col_manager] = manager_numeric.apply(
             lambda x: str(int(x)) if pd.notnull(x) else ""
         )
 
-    # 3) Cột ngày mở CIF: đổi serial date Excel thành ngày thật
+    # ngày
     if col_open_date is not None:
         converted_dates = convert_excel_serial_to_date(df_display[col_open_date])
         df_display[col_open_date] = converted_dates.dt.strftime("%Y-%m-%d")
         df_display[col_open_date] = df_display[col_open_date].fillna("")
 
-    # 4) Cột năm mở CIF: giữ nguyên dạng năm, không dấu phẩy
+    # năm
     if col_open_year is not None:
         year_numeric = pd.to_numeric(df_display[col_open_year], errors="coerce")
         df_display[col_open_year] = year_numeric.apply(
             lambda x: str(int(x)) if pd.notnull(x) else ""
         )
 
-    # 5) Format các cột số còn lại
-    excluded_cols = {
-        col_customer,
-        col_manager,
-        col_open_date,
-        col_open_year
-    }
+    # format số (trừ các cột mã)
+    excluded_cols = {col_customer, col_manager, col_open_date, col_open_year}
 
     numeric_cols = df_filtered.select_dtypes(include=["number"]).columns
 
@@ -134,12 +169,16 @@ if uploaded_file is not None:
                 lambda x: f"{x:,.0f}" if pd.notnull(x) else ""
             )
 
+    # =========================
+    # HIỂN THỊ
+    # =========================
     st.subheader("📋 Danh sách khách hàng (FULL DATA)")
+
     st.dataframe(
-    df_display,
-    use_container_width=True,
-    height=650,
-    hide_index=True
+        df_display,
+        use_container_width=True,
+        height=650,
+        hide_index=True
     )
 
 else:
