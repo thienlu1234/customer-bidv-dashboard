@@ -50,10 +50,8 @@ if uploaded_file is not None:
         st.error("❌ Không đọc được file")
         st.stop()
 
-    # chuẩn hóa cột
     df.columns = [str(c).strip().upper() for c in df.columns]
 
-    # tìm cột
     col_status = find_column(df, ["TRANGTHAI", "STATUS"])
     col_customer = find_column(df, ["MA_KHACHHANG", "CIF"])
     col_manager = find_column(df, ["CANBO_QUANLY", "CBQL"])
@@ -75,7 +73,7 @@ if uploaded_file is not None:
     )
 
     # =========================
-    # TRANG 1: TỔNG QUAN
+    # 1. TỔNG QUAN
     # =========================
     if menu == "📊 Tổng quan":
 
@@ -98,13 +96,12 @@ if uploaded_file is not None:
         c6.metric("NaN", f"{nan_count:,}")
 
     # =========================
-    # TRANG 2: CHĂM SÓC
+    # 2. CHĂM SÓC KHÁCH HÀNG
     # =========================
     elif menu == "🎯 Chăm sóc khách hàng":
 
         st.subheader("🎯 Phân loại chăm sóc theo HDVKKH_BQ")
 
-        # chỉ lấy Active + New
         df_cs = df[df[col_status].isin(["Active", "New"])].copy()
 
         col_hdv = "HDVKKH_BQ"
@@ -115,7 +112,6 @@ if uploaded_file is not None:
 
         df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
 
-        # KPI
         c1, c2, c3, c4 = st.columns(4)
 
         c1.metric("Dưới 5TR", f"{(df_cs[col_hdv] <= 5_000_000).sum():,}")
@@ -123,11 +119,13 @@ if uploaded_file is not None:
         c3.metric("20TR - 50TR", f"{((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum():,}")
         c4.metric("> 50TR", f"{(df_cs[col_hdv] > 50_000_000).sum():,}")
 
-        # chọn nhóm
         option = st.selectbox(
             "📌 Chọn nhóm",
             ["Dưới 5TR", "5TR - 20TR", "20TR - 50TR", "> 50TR"]
         )
+
+        # FIX LỖI df_show
+        df_show = df_cs.copy()
 
         if option == "Dưới 5TR":
             df_show = df_cs[df_cs[col_hdv] <= 5_000_000]
@@ -138,101 +136,32 @@ if uploaded_file is not None:
         else:
             df_show = df_cs[df_cs[col_hdv] > 50_000_000]
 
+        st.metric("Số khách", f"{len(df_show):,}")
+
+        st.dataframe(df_show, use_container_width=True, height=600, hide_index=True)
+
+    # =========================
+    # 3. HDVCKH_CK
+    # =========================
     elif menu == "💰 HDVCKH_CK":
 
-        st.subheader("💰 Khách hàng có phát sinh HDVCKH_CK")
-    
+        st.subheader("💰 Khách hàng cần chăm sóc (HDVCKH_CK)")
+
         col_ck = "HDVCKH_CK"
-    
+
         if col_ck not in df.columns:
             st.error("❌ Không tìm thấy cột HDVCKH_CK")
             st.stop()
-    
-        # 🔥 CHỈ LẤY ACTIVE + NEW
+
         df_ck = df[df[col_status].isin(["Active", "New"])].copy()
-    
-        # chuyển sang số
+
         df_ck[col_ck] = pd.to_numeric(df_ck[col_ck], errors="coerce")
-    
-        # lọc khách có giá trị
+
         df_ck = df_ck[df_ck[col_ck].notna() & (df_ck[col_ck] > 0)]
-    
+
         st.metric("Số khách cần chăm", f"{len(df_ck):,}")
-    
-        # =========================
-        # FORMAT
-        # =========================
-        df_display = df_ck.copy()
-    
-        if col_customer:
-            df_display[col_customer] = pd.to_numeric(df_display[col_customer], errors="coerce")\
-                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
-    
-        if col_manager:
-            df_display[col_manager] = pd.to_numeric(df_display[col_manager], errors="coerce")\
-                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
-    
-        # format số
-        exclude = {col_customer, col_manager}
-        num_cols = df_ck.select_dtypes(include=["number"]).columns
-    
-        for col in num_cols:
-            if col not in exclude:
-                df_display[col] = pd.to_numeric(df_ck[col], errors="coerce")\
-                    .apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else "")
-    
-        # hiển thị
-        st.dataframe(
-            df_display,
-            use_container_width=True,
-            height=600,
-            hide_index=True
-        )
-        # =========================
-        # FORMAT HIỂN THỊ
-        # =========================
-        df_display = df_show.copy()
 
-        # mã KH
-        if col_customer:
-            df_display[col_customer] = pd.to_numeric(df_display[col_customer], errors="coerce")\
-                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
-
-        # cán bộ
-        if col_manager:
-            df_display[col_manager] = pd.to_numeric(df_display[col_manager], errors="coerce")\
-                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
-
-        # ngày
-        if col_open_date:
-            df_display[col_open_date] = convert_excel_serial_to_date(df_display[col_open_date])\
-                .dt.strftime("%Y-%m-%d")
-
-        # năm
-        if col_open_year:
-            df_display[col_open_year] = pd.to_numeric(df_display[col_open_year], errors="coerce")\
-                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
-
-        # format số
-        exclude = {col_customer, col_manager, col_open_date, col_open_year}
-        num_cols = df_show.select_dtypes(include=["number"]).columns
-
-        for col in num_cols:
-            if col not in exclude:
-                df_display[col] = pd.to_numeric(df_show[col], errors="coerce")\
-                    .apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else "")
-
-        # =========================
-        # HIỂN THỊ
-        # =========================
-        st.subheader("📋 Danh sách khách hàng")
-
-        st.dataframe(
-            df_display,
-            use_container_width=True,
-            height=600,
-            hide_index=True
-        )
+        st.dataframe(df_ck, use_container_width=True, height=600, hide_index=True)
 
 else:
     st.info("👉 Upload file để bắt đầu")
