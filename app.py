@@ -125,12 +125,10 @@ if uploaded_file is not None:
     st.subheader("📋 Danh sách khách hàng")
 
     st.dataframe(
-        df_display[important_cols].style.applymap(
-            highlight_status, subset=[col_status]
-        ),
-        use_container_width=True,
-        height=600
-    )
+    df_display[important_cols],
+    use_container_width=True,
+    height=600
+)
 
 else:
     st.info("👉 Upload file để bắt đầu")
