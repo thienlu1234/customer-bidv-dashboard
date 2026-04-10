@@ -64,16 +64,23 @@ if uploaded_file is not None:
     # =========================
     # KPI
     # =========================
-    st.subheader("📌 Tổng quan")
+    st.subheader("📌 Tổng quan khách hàng")
 
     total = len(df)
     active = (df[col_status] == "Active").sum()
     new = (df[col_status] == "New").sum()
-
-    c1, c2, c3 = st.columns(3)
+    frozen = (df[col_status] == "Frozen").sum()
+    dormant = (df[col_status] == "Dormant").sum()
+    nan_count = df[col_status].isna().sum()
+    
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    
     c1.metric("Tổng KH", f"{total:,}")
     c2.metric("Active", f"{active:,}")
     c3.metric("New", f"{new:,}")
+    c4.metric("Frozen", f"{frozen:,}")
+    c5.metric("Dormant", f"{dormant:,}")
+    c6.metric("NaN", f"{nan_count:,}")
 
     # =========================
     # CHỈ LẤY ACTIVE + NEW
