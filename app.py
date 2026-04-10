@@ -34,8 +34,8 @@ if uploaded_file is not None:
 
     df = load_data(uploaded_file)
 
-    # fix NaN
-    df = df.fillna("NaN")
+    # giữ nguyên NaN (KHÔNG replace nữa)
+    # df = df.fillna("NaN")
 
     # chuẩn hóa tên cột
     df.columns = [str(c).strip().upper() for c in df.columns]
@@ -44,8 +44,6 @@ if uploaded_file is not None:
     # TÌM CỘT TRẠNG THÁI
     # =========================
     col_status = next((c for c in df.columns if "TRANGTHAI" in c or "STATUS" in c), None)
-    col_manager = next((c for c in df.columns if "CANBO" in c), None)
-    col_phong = next((c for c in df.columns if "PHONG" in c), None)
 
     if col_status is None:
         st.error("❌ Không tìm thấy cột trạng thái")
@@ -61,7 +59,7 @@ if uploaded_file is not None:
     new = len(df[df[col_status] == "New"])
     frozen = len(df[df[col_status] == "Frozen"])
     dormant = len(df[df[col_status] == "Dormant"])
-    null = len(df[df[col_status] == "NaN"])
+    null = df[col_status].isna().sum()
 
     st.subheader("📌 Tổng quan khách hàng")
 
@@ -77,8 +75,6 @@ if uploaded_file is not None:
     # =========================
     # FILTER
     # =========================
-    st.subheader("🎯 Lọc dữ liệu")
-
     option = st.selectbox("Chọn loại khách", ["All", "Active", "New"])
 
     df_filtered = df.copy()
@@ -87,7 +83,7 @@ if uploaded_file is not None:
         df_filtered = df_filtered[df_filtered[col_status] == option]
 
     # =========================
-    # FORMAT SỐ
+    # FORMAT SỐ (GIỮ NGUYÊN CỘT)
     # =========================
     df_display = df_filtered.copy()
 
@@ -99,36 +95,15 @@ if uploaded_file is not None:
         )
 
     # =========================
-    # CHỌN CỘT QUAN TRỌNG
+    # HIỂN THỊ FULL DATA
     # =========================
-    important_cols = [
-        col_status,
-        "TNT",
-        "HDVBQ",
-        "TOTAL_SPDV",
-        col_manager,
-        col_phong
-    ]
-
-    important_cols = [c for c in important_cols if c in df_display.columns]
-
-    # =========================
-    # HIGHLIGHT MÀU
-    # =========================
-    def highlight_status(val):
-        if val == "Active":
-            return "background-color: lightgreen"
-        elif val == "New":
-            return "background-color: lightblue"
-        return ""
-
-    st.subheader("📋 Danh sách khách hàng")
+    st.subheader("📋 Danh sách khách hàng (FULL DATA)")
 
     st.dataframe(
-    df_display[important_cols],
-    use_container_width=True,
-    height=600
-)
+        df_display,
+        use_container_width=True,
+        height=600
+    )
 
 else:
     st.info("👉 Upload file để bắt đầu")
