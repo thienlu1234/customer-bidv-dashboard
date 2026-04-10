@@ -136,9 +136,10 @@ if uploaded_file is not None:
 
     st.subheader("📋 Danh sách khách hàng (FULL DATA)")
     st.dataframe(
-    df_display.reset_index(drop=True),
+    df_display,
     use_container_width=True,
-    height=650
+    height=650,
+    hide_index=True
     )
 
 else:
