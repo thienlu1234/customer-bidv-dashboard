@@ -5,6 +5,9 @@ st.set_page_config(layout="wide")
 
 st.title("📊 Dashboard Trạng Thái Khách Hàng")
 
+# =========================
+# UPLOAD FILE
+# =========================
 uploaded_file = st.file_uploader(
     "Upload file dữ liệu",
     type=["xlsx", "csv", "xlsb"]
@@ -24,13 +27,17 @@ def load_data(file):
     elif name.endswith(".xlsb"):
         return pd.read_excel(file, engine="pyxlsb")
 
+# =========================
+# MAIN
+# =========================
 if uploaded_file is not None:
+
     df = load_data(uploaded_file)
+
+    # fix dữ liệu trống
     df = df.fillna("NaN")
 
-    # =========================
-    # FIX CỘT
-    # =========================
+    # fix tên cột
     df.columns = [str(c).strip().upper() for c in df.columns]
 
     # =========================
@@ -42,13 +49,11 @@ if uploaded_file is not None:
         st.error("❌ Không tìm thấy cột trạng thái")
         st.stop()
 
-    # =========================
-    # CHUẨN HÓA TRẠNG THÁI
-    # =========================
+    # chuẩn hóa
     df[col_status] = df[col_status].astype(str).str.strip()
 
     # =========================
-    # KPI TỔNG QUAN
+    # KPI
     # =========================
     total = len(df)
     active = len(df[df[col_status] == "Active"])
@@ -69,17 +74,30 @@ if uploaded_file is not None:
     col6.metric("NaN", f"{null:,}")
 
     # =========================
-    # FILTER CHỈ ACTIVE + NEW
+    # FILTER ACTIVE + NEW
     # =========================
     df_filtered = df[df[col_status].isin(["Active", "New"])]
 
     st.subheader("🎯 Danh sách khách hàng Active & New")
 
+    # =========================
+    # FORMAT SỐ CHO ĐẸP
+    # =========================
+    df_display = df_filtered.copy()
+
+    numeric_cols = df_display.select_dtypes(include=["int64", "float64"]).columns
+
+    for col in numeric_cols:
+        df_display[col] = df_display[col].apply(lambda x: f"{x:,.0f}")
+
+    # =========================
+    # HIỂN THỊ
+    # =========================
     st.dataframe(
-        df_filtered,
+        df_display,
         use_container_width=True,
         height=600
     )
 
 else:
-    st.info("Upload file để bắt đầu")
+    st.info("👉 Upload file để bắt đầu")
