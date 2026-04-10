@@ -71,7 +71,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng"]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK"]
     )
 
     # =========================
@@ -138,6 +138,56 @@ if uploaded_file is not None:
         else:
             df_show = df_cs[df_cs[col_hdv] > 50_000_000]
 
+    elif menu == "💰 HDVCKH_CK":
+
+        st.subheader("💰 Khách hàng có phát sinh HDVCKH_CK")
+    
+        col_ck = "HDVCKH_CK"
+    
+        if col_ck not in df.columns:
+            st.error("❌ Không tìm thấy cột HDVCKH_CK")
+            st.stop()
+    
+        # 🔥 CHỈ LẤY ACTIVE + NEW
+        df_ck = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # chuyển sang số
+        df_ck[col_ck] = pd.to_numeric(df_ck[col_ck], errors="coerce")
+    
+        # lọc khách có giá trị
+        df_ck = df_ck[df_ck[col_ck].notna() & (df_ck[col_ck] > 0)]
+    
+        st.metric("Số khách cần chăm", f"{len(df_ck):,}")
+    
+        # =========================
+        # FORMAT
+        # =========================
+        df_display = df_ck.copy()
+    
+        if col_customer:
+            df_display[col_customer] = pd.to_numeric(df_display[col_customer], errors="coerce")\
+                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
+    
+        if col_manager:
+            df_display[col_manager] = pd.to_numeric(df_display[col_manager], errors="coerce")\
+                .apply(lambda x: str(int(x)) if pd.notnull(x) else "")
+    
+        # format số
+        exclude = {col_customer, col_manager}
+        num_cols = df_ck.select_dtypes(include=["number"]).columns
+    
+        for col in num_cols:
+            if col not in exclude:
+                df_display[col] = pd.to_numeric(df_ck[col], errors="coerce")\
+                    .apply(lambda x: f"{x:,.0f}" if pd.notnull(x) else "")
+    
+        # hiển thị
+        st.dataframe(
+            df_display,
+            use_container_width=True,
+            height=600,
+            hide_index=True
+        )
         # =========================
         # FORMAT HIỂN THỊ
         # =========================
