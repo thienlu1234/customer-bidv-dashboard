@@ -107,7 +107,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK"]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người"]]
     )
 
     # =========================
@@ -225,5 +225,53 @@ if uploaded_file is not None:
             hide_index=True
         )
 
+    # =========================
+    # 5. TRUNG BÌNH DV / NGƯỜI
+    # =========================
+    elif menu == "📈 Trung bình DV/ người":
+    
+        st.subheader("📈 Trung bình số dịch vụ / khách hàng")
+    
+        col_spdv = "TOTAL_SPDV"
+    
+        if col_spdv not in df.columns:
+            st.error("❌ Không tìm thấy cột TOTAL_SPDV")
+            st.stop()
+    
+        # 🔥 chỉ lấy Active + New
+        df_kh = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # chuyển sang số
+        df_kh[col_spdv] = pd.to_numeric(df_kh[col_spdv], errors="coerce")
+    
+        # tổng dịch vụ
+        total_spdv = df_kh[col_spdv].sum()
+    
+        # số khách
+        total_kh = len(df_kh)
+    
+        # trung bình
+        avg_spdv = total_spdv / total_kh if total_kh > 0 else 0
+    
+        # =========================
+        # HIỂN THỊ KPI
+        # =========================
+        c1, c2, c3 = st.columns(3)
+    
+        c1.metric("Tổng DV", f"{int(total_spdv):,}")
+        c2.metric("Số KH", f"{total_kh:,}")
+        c3.metric("Trung bình DV / KH", f"{avg_spdv:.2f}")
+    
+        # =========================
+        # HIỂN THỊ DATA
+        # =========================
+        st.subheader("📋 Danh sách khách hàng")
+    
+        st.dataframe(
+            format_dataframe(df_kh, col_customer, col_manager),
+            use_container_width=True,
+            height=600,
+            hide_index=True
+        )
 else:
     st.info("👉 Upload file để bắt đầu")
