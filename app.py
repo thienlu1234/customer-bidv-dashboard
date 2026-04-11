@@ -335,7 +335,7 @@ if uploaded_file is not None:
     # =========================
     # 5. TRUNG BÌNH DV / NGƯỜI
     # =========================
-    elif menu == "📈  Trung bình DV/ người":
+    elif menu == "📈  Trung bình DV/người":
     
         st.subheader("📈 Trung bình số dịch vụ / khách hàng")
     
@@ -383,7 +383,7 @@ if uploaded_file is not None:
     # =========================
     # THEO CÁN BỘ QUẢN LÝ
     # =========================
-    elif menu == "👨‍💼  Theo cán bộ quản lý":
+    elif menu == "👨‍💼  Theo cán bộ":
     
         st.subheader("👨‍💼 Hiệu suất theo cán bộ quản lý")
     
