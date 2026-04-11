@@ -598,6 +598,7 @@ if uploaded_file is not None:
     # 5. TRUNG BÌNH DV / NGƯỜI
     # =========================
     elif menu == "📈  Trung bình DV/người":
+    
         st.markdown(
             '<div class="section-title">📈 Phân loại theo số dịch vụ / khách hàng</div>',
             unsafe_allow_html=True
@@ -615,35 +616,83 @@ if uploaded_file is not None:
         # chuyển sang số
         df_kh[col_spdv] = pd.to_numeric(df_kh[col_spdv], errors="coerce")
     
-        # tổng dịch vụ
+        # =========================
+        # KPI
+        # =========================
         total_spdv = df_kh[col_spdv].sum()
-    
-        # số khách
         total_kh = len(df_kh)
-    
-        # trung bình
         avg_spdv = total_spdv / total_kh if total_kh > 0 else 0
     
-        # =========================
-        # HIỂN THỊ KPI
-        # =========================
         c1, c2, c3 = st.columns(3)
     
-        c1.metric("Tổng DV", f"{int(total_spdv):,}")
-        c2.metric("Số KH", f"{total_kh:,}")
-        c3.metric("Trung bình DV / KH", f"{avg_spdv:.2f}")
+        c1.metric("💳 Tổng DV", f"{int(total_spdv):,}")
+        c2.metric("👥 Số KH", f"{total_kh:,}")
+        c3.metric("📊 TB DV / KH", f"{avg_spdv:.2f}")
     
         # =========================
-        # HIỂN THỊ DATA
+        # 🔥 PHÂN BỐ SỐ DỊCH VỤ
         # =========================
-        st.subheader("📋 Danh sách khách hàng")
-    
-        st.dataframe(
-            format_dataframe(df_kh, col_customer, col_manager),
-            use_container_width=True,
-            height=600,
-            hide_index=True
+        st.markdown(
+            '<div class="section-title">📊 Phân bố số dịch vụ</div>',
+            unsafe_allow_html=True
         )
+    
+        df_dist = df_kh.dropna(subset=[col_spdv])
+    
+        dv_dist = (
+            df_dist.groupby(col_spdv)
+            .size()
+            .reset_index(name="Số khách")
+            .sort_values(by=col_spdv)
+        )
+    
+        dv_dist.columns = ["Số dịch vụ", "Số khách"]
+    
+        # format đẹp
+        dv_dist["Số khách"] = dv_dist["Số khách"].apply(lambda x: f"{x:,}")
+    
+        # =========================
+        # HIỂN THỊ 2 CỘT (TABLE + CHART)
+        # =========================
+        col1, col2 = st.columns([1, 2])
+    
+        # ===== TABLE =====
+        with col1:
+            st.markdown("### 📋 Bảng phân bố")
+            st.dataframe(
+                dv_dist,
+                use_container_width=True,
+                hide_index=True
+            )
+    
+        # ===== CHART =====
+        with col2:
+            import plotly.express as px
+    
+            dv_dist_chart = dv_dist.copy()
+            dv_dist_chart["Số khách"] = dv_dist_chart["Số khách"].str.replace(",", "").astype(int)
+    
+            fig = px.bar(
+                dv_dist_chart,
+                x="Số dịch vụ",
+                y="Số khách",
+                text="Số khách",
+                color="Số dịch vụ",
+                color_continuous_scale="Teal"
+            )
+    
+            fig.update_traces(textposition="outside")
+    
+            fig.update_layout(
+                title="Phân bố số dịch vụ / khách hàng",
+                xaxis_title="Số dịch vụ",
+                yaxis_title="Số khách",
+                showlegend=False,
+                height=400,
+                margin=dict(l=10, r=10, t=40, b=10)
+            )
+    
+            st.plotly_chart(fig, use_container_width=True)
     # =========================
     # THEO CÁN BỘ QUẢN LÝ
     # =========================
