@@ -243,7 +243,7 @@ if uploaded_file is not None:
     # =========================
     # 2. CHĂM SÓC KHÁCH HÀNG
     # =========================
-    elif menu == "🎯  Chăm sóc khách hàng":
+    elif menu == "🎯  Chăm sóc KH":
 
         st.subheader("🎯 Phân loại theo HDVKKH_BQ")
 
