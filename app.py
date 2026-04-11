@@ -290,7 +290,7 @@ if uploaded_file is not None:
                 margin=dict(t=20, b=40, l=0, r=0),
         
                 annotations=[dict(
-                    text="Customer<br>Overview",
+                    text="Tỉ lệ<br>khách hàng",
                     x=0.5, y=0.5,
                     font_size=14,
                     showarrow=False
