@@ -504,7 +504,7 @@ if uploaded_file is not None:
     elif menu == "💰  HDVCKH_CK":
     
         st.markdown(
-            '<div class="section-title">💰 Khách hàng cần chăm (HDVCKH_CK)</div>',
+            '<div class="section-title">💰 Phân loại theo HDVCKH_CK</div>',
             unsafe_allow_html=True
         )
     
@@ -545,7 +545,7 @@ if uploaded_file is not None:
     elif menu == "🏦  DNCK":
     
         st.markdown(
-            '<div class="section-title">🏦 Khách hàng DNCK</div>',
+            '<div class="section-title">🏦 Phân loại theo DNCK</div>',
             unsafe_allow_html=True
         )
     
@@ -585,7 +585,7 @@ if uploaded_file is not None:
     # =========================
     elif menu == "📈  Trung bình DV/người":
         st.markdown(
-            '<div class="section-title">📈 Trung bình số dịch vụ / khách hàng</div>',
+            '<div class="section-title">📈 Phân loại theo số dịch vụ / khách hàng</div>',
             unsafe_allow_html=True
         )
     
@@ -636,7 +636,7 @@ if uploaded_file is not None:
     elif menu == "👨‍💼  Theo cán bộ":
     
         st.markdown(
-            '<div class="section-title">👨‍💼 Hiệu suất theo cán bộ quản lý</div>',
+            '<div class="section-title">👨‍💼 Phân loại theo cán bộ quản lý</div>',
             unsafe_allow_html=True
         )
     
@@ -756,7 +756,7 @@ if uploaded_file is not None:
     elif menu == "🏢  Theo phòng ban":
     
         st.markdown(
-            '<div class="section-title">👨‍💼 Hiệu suất theo cán bộ quản lý</div>',
+            '<div class="section-title">🏢 Phân loại theo phòng ban</div>',
             unsafe_allow_html=True
         )
     
@@ -838,7 +838,7 @@ if uploaded_file is not None:
     elif menu == "👶  Độ tuổi":
 
         st.markdown(
-            '<div class="section-title">👶 Phân loại khách hàng theo độ tuổi</div>',
+            '<div class="section-title">👶 Phân loại theo độ tuổi</div>',
             unsafe_allow_html=True
         )
     
@@ -885,7 +885,7 @@ if uploaded_file is not None:
     elif menu == "💼  Nghề nghiệp":
 
         st.markdown(
-            '<div class="section-title">💼 Phân loại khách hàng theo nghề nghiệp</div>',
+            '<div class="section-title">💼 Phân loại theo nghề nghiệp</div>',
             unsafe_allow_html=True
         )
     
