@@ -341,6 +341,8 @@ if uploaded_file is not None:
         # =========================
         # HIỂN THỊ
         # =========================
+        group_cbql = group_cbql.sort_values(by="tong_kh_all", ascending=False)
+
         st.dataframe(
             group_cbql[[
                 "CANBO_QUANLY",
@@ -350,7 +352,7 @@ if uploaded_file is not None:
                 "Tổng DV",
                 "Tổng HDV",
                 "DV/KH"
-            ]].sort_values(by="tong_kh_all", ascending=False),
+            ]],
             use_container_width=True,
             hide_index=True
         )
