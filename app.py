@@ -240,55 +240,64 @@ if uploaded_file is not None:
             kpi_card("❓ NaN", f"{nan_count:,}")
     
         # ======================
-        # BIỂU ĐỒ TRÒN (ĐẸP)
+        # 🎯 BIỂU ĐỒ TRÒN XỊN
         # ======================
+        
         st.markdown("### 📊 Tỷ lệ khách hàng")
-    
-        labels = ["🔥 Active", "🆕 New", "❄️ Frozen", "😴 Dormant"]
+        
+        labels = ["Active", "New", "Frozen", "Dormant"]
         values = [active, new, frozen, dormant]
-    
-        fig = go.Figure(data=[go.Pie(
-            labels=labels,
-            values=values,
-            hole=0.4,  # donut
-    
-            # hiệu ứng nổi
-            pull=[0.08, 0.1, 0, 0],
-    
-            marker=dict(
-                colors=[
-                    "#00A65A",  # xanh lá
-                    "#F5C32C",  # vàng
-                    "#00BFFF",  # xanh dương
-                    "#FF6B6B"   # đỏ
-                ],
-                line=dict(color="white", width=2)
-            ),
-    
-            textinfo="label+percent",
-            textfont=dict(size=14)
-        )])
-    
-        fig.update_layout(
-            title={
-                "text": "Phân bổ trạng thái khách hàng",
-                "x": 0.5
-            },
-            margin=dict(t=50, b=20)
-        )
-    
-        st.plotly_chart(fig, use_container_width=True)
-    
-        # ======================
-        # INSIGHT NHANH
-        # ======================
-        st.markdown("### 💡 Insight nhanh")
-    
-        i1, i2, i3 = st.columns(3)
-    
-        i1.metric("Tỷ lệ Active", f"{active/total:.1%}")
-        i2.metric("Tỷ lệ Frozen", f"{frozen/total:.1%}")
-        i3.metric("Tỷ lệ Dormant", f"{dormant/total:.1%}")
+        
+        # CHIA LAYOUT CHO ĐẸP (center)
+        col_left, col_center, col_right = st.columns([1, 2, 1])
+        
+        with col_center:
+            fig = go.Figure(data=[go.Pie(
+                labels=labels,
+                values=values,
+        
+                hole=0.55,  # donut sâu hơn → sang hơn
+        
+                # chỉ highlight Active thôi (đỡ rối)
+                pull=[0.06, 0, 0, 0],
+        
+                marker=dict(
+                    colors=[
+                        "#0E6F66",  # xanh BIDV (Active)
+                        "#F5C32C",  # vàng (New)
+                        "#5DADE2",  # xanh nhạt (Frozen)
+                        "#EC7063"   # đỏ (Dormant)
+                    ],
+                    line=dict(color="white", width=3)
+                ),
+        
+                textinfo="percent",  # chỉ hiện % cho gọn
+                textfont=dict(size=18, color="white"),
+        
+                hovertemplate="<b>%{label}</b><br>Số KH: %{value:,}<br>Tỷ lệ: %{percent}<extra></extra>"
+            )])
+        
+            fig.update_layout(
+                showlegend=True,
+        
+                legend=dict(
+                    orientation="h",
+                    y=-0.1,
+                    x=0.5,
+                    xanchor="center"
+                ),
+        
+                margin=dict(t=20, b=40, l=0, r=0),
+        
+                annotations=[dict(
+                    text="Customer<br>Overview",
+                    x=0.5, y=0.5,
+                    font_size=14,
+                    showarrow=False
+                )]
+            )
+        
+            st.plotly_chart(fig, use_container_width=True)
 
     # =========================
     # 2. CHĂM SÓC KHÁCH HÀNG
