@@ -65,17 +65,17 @@ def format_dataframe(df, col_customer=None, col_manager=None):
         # format số
         elif df_display[col].dtype in ["float64", "int64"]:
 
-        # ❌ KHÔNG format các cột mã + năm
-        if col in [col_customer, col_manager] or "NAM" in col:
-            df_display[col] = df_display[col].apply(
-                lambda x: str(int(x)) if pd.notnull(x) else ""
-            )
-    
-        # ✅ format số tiền
-        else:
-            df_display[col] = df_display[col].apply(
-                lambda x: f"{x:,.0f}" if pd.notnull(x) else ""
-            )
+            # ❌ KHÔNG format các cột mã + năm
+            if col in [col_customer, col_manager] or "NAM" in col:
+                df_display[col] = df_display[col].apply(
+                    lambda x: str(int(x)) if pd.notnull(x) else ""
+                )
+        
+            # ✅ format số tiền
+            else:
+                df_display[col] = df_display[col].apply(
+                    lambda x: f"{x:,.0f}" if pd.notnull(x) else ""
+                )
 
     return df_display
 
