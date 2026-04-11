@@ -477,13 +477,22 @@ if uploaded_file is not None:
             st.write("Các cột hiện có:", df.columns)
             st.stop()
     
-        # 👉 KHÔNG xử lý gì hết
-        df_dnck = df.copy()
+        # 🔥 1. CHỈ LẤY Active + New
+        df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # 🔥 2. CHỈ GIỮ KHÁCH CÓ DNCK (có giá trị)
+        df_dnck = df_dnck[
+            (df_dnck[col_dnck].notna()) &
+            (df_dnck[col_dnck] != 0)
+        ]
+    
+        # 🔥 3. SẮP XẾP TIỀN LỚN → NHỎ
+        df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
     
         # KPI
-        st.metric("Tổng số khách", f"{len(df_dnck):,}")
+        st.metric("Số khách DNCK", f"{len(df_dnck):,}")
     
-        # 👉 HIỂN THỊ TRỰC TIẾP
+        # hiển thị
         st.dataframe(
             format_dataframe(df_dnck, col_customer, col_manager),
             use_container_width=True,
