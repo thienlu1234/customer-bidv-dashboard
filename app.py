@@ -424,23 +424,38 @@ if uploaded_file is not None:
             height=600,
             hide_index=True
         )
+    # =========================
     # 3. HDVCKH_CK
     # =========================
     elif menu == "💰  HDVCKH_CK":
-
+    
         st.subheader("💰 Khách hàng cần chăm (HDVCKH_CK)")
-
+    
+        # 🔥 chỉ lấy Active + New (giống toàn hệ thống của bạn)
+        df_ck = df[df[col_status].isin(["Active", "New"])].copy()
+    
         col_ck = "HDVCKH_CK"
-
-        if col_ck not in df_show.columns:
+    
+        # kiểm tra cột
+        if col_ck not in df_ck.columns:
             st.error("❌ Không tìm thấy cột HDVCKH_CK")
             st.stop()
-        
-        df_show[col_ck] = pd.to_numeric(df_show[col_ck], errors="coerce")
-        df_show = df_show.sort_values(by=col_ck, ascending=False)
-        
+    
+        # chuyển sang số
+        df_ck[col_ck] = pd.to_numeric(df_ck[col_ck], errors="coerce")
+    
+        # lọc khách có giá trị (khách cần chăm)
+        df_ck = df_ck[df_ck[col_ck] > 0]
+    
+        # sort tiền lớn lên trên
+        df_ck = df_ck.sort_values(by=col_ck, ascending=False)
+    
+        # KPI
+        st.metric("Số khách cần chăm", f"{len(df_ck):,}")
+    
+        # hiển thị
         st.dataframe(
-            format_dataframe(df_show, col_customer, col_manager),
+            format_dataframe(df_ck, col_customer, col_manager),
             use_container_width=True,
             height=600,
             hide_index=True
