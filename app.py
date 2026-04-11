@@ -614,10 +614,10 @@ if uploaded_file is not None:
         group_cbql["DV/KH"] = group_cbql["dv_trung_binh"].apply(lambda x: f"{x:.2f}")
     
         # =========================
-        # HIỂN THỊ
+        # HIỂN THỊ BẢNG TỔNG
         # =========================
         group_cbql = group_cbql.sort_values(by="tong_kh_all", ascending=False)
-
+    
         st.dataframe(
             group_cbql[[
                 "CANBO_QUANLY",
@@ -629,6 +629,37 @@ if uploaded_file is not None:
                 "DV/KH"
             ]],
             use_container_width=True,
+            hide_index=True
+        )
+    
+        # =========================
+        # 🔥 CHI TIẾT KHÁCH THEO CÁN BỘ
+        # =========================
+        st.markdown("---")
+        st.subheader("🔍 Chi tiết khách hàng theo cán bộ")
+    
+        # danh sách cán bộ
+        list_cb = group_cbql["HO VA TEN"].unique()
+    
+        selected_cb = st.selectbox(
+            "Chọn cán bộ quản lý",
+            list_cb
+        )
+    
+        # lọc khách
+        df_detail = df[
+            (df["HO VA TEN"] == selected_cb) &
+            (df[col_status].isin(["Active", "New"]))
+        ].copy()
+    
+        # KPI nhỏ
+        st.metric("Số khách Active + New", f"{len(df_detail):,}")
+    
+        # hiển thị bảng chi tiết
+        st.dataframe(
+            format_dataframe(df_detail, col_customer, col_manager),
+            use_container_width=True,
+            height=500,
             hide_index=True
         )
     # =========================
