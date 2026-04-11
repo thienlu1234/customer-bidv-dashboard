@@ -24,7 +24,16 @@ section[data-testid="stSidebar"] * {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-title">🏦 Dashboard Khách Hàng BIDV</div>', unsafe_allow_html=True)
+col_logo, col_title = st.columns([1, 6])
+
+with col_logo:
+    st.image("logo_bidv.png", width=80)
+
+with col_title:
+    st.markdown(
+        '<div class="main-title">Dashboard Khách Hàng BIDV</div>',
+        unsafe_allow_html=True
+    )
 
 # =========================
 # UPLOAD FILE
