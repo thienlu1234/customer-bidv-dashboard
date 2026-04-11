@@ -165,7 +165,7 @@ def kpi_card(title, value):
 # ======================
 menu = option_menu(
     None,
-    ["📊  Tổng quan", "🎯  HDVKKH_BQ", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Theo cán bộ", "🏢  Theo phòng ban", "👶  Độ tuổi", "💼  Nghề nghiệp"],
+    ["📊  Tổng quan", "🎯  HDVKKH_BQ", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Cán bộ", "🏢  Phòng ban", "👶  Độ tuổi", "💼  Nghề nghiệp"],
     
     orientation="horizontal",
     styles={
@@ -633,7 +633,7 @@ if uploaded_file is not None:
     # =========================
     # THEO CÁN BỘ QUẢN LÝ
     # =========================
-    elif menu == "👨‍💼  Theo cán bộ":
+    elif menu == "👨‍💼  Cán bộ":
     
         st.markdown(
             '<div class="section-title">👨‍💼 Phân loại theo cán bộ quản lý</div>',
@@ -753,7 +753,7 @@ if uploaded_file is not None:
     # =========================
     # THEO PHÒNG BAN
     # =========================
-    elif menu == "🏢  Theo phòng ban":
+    elif menu == "🏢  Phòng ban":
     
         st.markdown(
             '<div class="section-title">🏢 Phân loại theo phòng ban</div>',
