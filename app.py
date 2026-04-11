@@ -462,32 +462,28 @@ if uploaded_file is not None:
         )
 
     # =========================
+    # =========================
+    # 4. DNCK
+    # =========================
     elif menu == "🏦 DNCK":
-
-        st.subheader("🏦 Khách hàng DNCK")
     
-        df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+        st.subheader("🏦 Khách hàng DNCK")
     
         col_dnck = "DNCK"
     
-        if col_dnck not in df_dnck.columns:
+        # kiểm tra cột trong df gốc
+        if col_dnck not in df.columns:
             st.error("❌ Không tìm thấy cột DNCK")
+            st.write("Các cột hiện có:", df.columns)
             st.stop()
     
-        # 🔥 FIX FORMAT SỐ
-        df_dnck[col_dnck] = (
-            df_dnck[col_dnck]
-            .astype(str)
-            .str.replace(",", "", regex=False)
-        )
+        # 👉 KHÔNG xử lý gì hết
+        df_dnck = df.copy()
     
-        df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
+        # KPI
+        st.metric("Tổng số khách", f"{len(df_dnck):,}")
     
-        # sort
-        df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
-    
-        st.metric("Số khách DNCK", f"{df_dnck[col_dnck].notna().sum():,}")
-    
+        # 👉 HIỂN THỊ TRỰC TIẾP
         st.dataframe(
             format_dataframe(df_dnck, col_customer, col_manager),
             use_container_width=True,
