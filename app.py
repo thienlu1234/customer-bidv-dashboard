@@ -438,6 +438,7 @@ if uploaded_file is not None:
         df_ck = df_ck[df_ck[col_ck] > 0]
 
         st.metric("Số khách", f"{len(df_ck):,}")
+        df_show["HDVCKH_CK"] = pd.to_numeric(df_show["HDVCKH_CK"], errors="coerce")
         df_show = df_show.sort_values(by="HDVCKH_CK", ascending=False)
         st.dataframe(
             format_dataframe(df_ck, col_customer, col_manager),
