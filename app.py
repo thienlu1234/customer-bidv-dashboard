@@ -2,8 +2,29 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(layout="wide")
+st.markdown("""
+<style>
+/* Sidebar nền xanh BIDV */
+section[data-testid="stSidebar"] {
+    background-color: #0E6F66;
+}
 
-st.title("📊 Dashboard Khách Hàng")
+/* Chữ trong sidebar màu trắng */
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* Tiêu đề chính */
+.main-title {
+    font-size: 38px;
+    font-weight: 700;
+    color: #0E6F66;
+    margin-bottom: 10px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown('<div class="main-title">🏦 Dashboard Khách Hàng BIDV</div>', unsafe_allow_html=True)
 
 # =========================
 # UPLOAD FILE
