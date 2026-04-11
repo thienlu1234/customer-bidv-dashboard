@@ -166,7 +166,7 @@ def kpi_card(title, value):
 col_logo, col_title = st.columns([1, 6])
 
 with col_logo:
-    st.image("logo_bidv.png", width=80)
+    st.image("logo_bidv.png", width=100)
 
 with col_title:
     st.markdown(
