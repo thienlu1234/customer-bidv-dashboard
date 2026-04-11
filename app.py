@@ -80,7 +80,7 @@ with col_title:
 # ======================
 menu = option_menu(
     None,
-    ["📊  Tổng quan", "🎯  Chăm sóc KH", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Theo cán bộ", "🏢  Theo phòng ban"],
+    ["📊  Tổng quan", "🎯  Chăm sóc KH", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Theo cán bộ", "🏢  Theo phòng ban", "👶  Độ tuổi", "💼  Nghề nghiệp"],
     
     orientation="horizontal",
     styles={
@@ -544,6 +544,72 @@ if uploaded_file is not None:
             ]],
             use_container_width=True,
             hide_index=True
-        )    
+        ) 
+    elif menu == "👶  Độ tuổi":
+
+        st.subheader("👶 Phân loại khách hàng theo độ tuổi")
+    
+        # chỉ lấy Active + New
+        df_kh = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # tìm cột tuổi
+        col_age = None
+        for col in df.columns:
+            if "TUOI" in col.upper() or "AGE" in col.upper():
+                col_age = col
+                break
+    
+        if col_age is None:
+            st.error("❌ Không tìm thấy cột tuổi")
+            st.stop()
+    
+        df_kh[col_age] = pd.to_numeric(df_kh[col_age], errors="coerce")
+    
+        # phân nhóm tuổi
+        def age_group(x):
+            if pd.isna(x):
+                return "Không rõ"
+            elif x < 25:
+                return "<25"
+            elif x < 35:
+                return "25-34"
+            elif x < 45:
+                return "35-44"
+            elif x < 60:
+                return "45-59"
+            else:
+                return "60+"
+    
+        df_kh["AGE_GROUP"] = df_kh[col_age].apply(age_group)
+    
+        result = df_kh["AGE_GROUP"].value_counts().reset_index()
+        result.columns = ["Nhóm tuổi", "Số KH"]
+    
+        result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
+    
+        st.dataframe(result, use_container_width=True, hide_index=True)
+    elif menu == "💼  Nghề nghiệp":
+
+        st.subheader("💼 Phân loại khách hàng theo nghề nghiệp")
+    
+        df_kh = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # tìm cột nghề nghiệp
+        col_job = None
+        for col in df.columns:
+            if "NGHE" in col.upper() or "JOB" in col.upper():
+                col_job = col
+                break
+    
+        if col_job is None:
+            st.error("❌ Không tìm thấy cột nghề nghiệp")
+            st.stop()
+    
+        result = df_kh[col_job].value_counts().reset_index()
+        result.columns = ["Nghề nghiệp", "Số KH"]
+    
+        result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
+    
+        st.dataframe(result, use_container_width=True, hide_index=True)
 else:
     st.info("👉 Upload file để bắt đầu")
