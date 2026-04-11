@@ -81,13 +81,13 @@ with col_title:
 menu = option_menu(
     None,
     ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý", "🏢 Theo phòng ban"],
-    icons=["bar-chart", "target", "cash", "bank", "graph-up", "person", "building"],
+    
     orientation="horizontal",
     styles={
         "container": {"background-color": "#0E6F66"},
         "nav-link": {
             "color": "white",
-            "font-size": "14px",
+            "font-size": "16px",
             "text-align": "center",
         },
         "nav-link-selected": {
