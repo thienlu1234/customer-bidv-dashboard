@@ -463,40 +463,41 @@ if uploaded_file is not None:
 
     # =========================
    
-    # 4. DNCK
-    # =========================
     elif menu == "🏦 DNCK":
-    
-        st.subheader("🏦 Khách hàng DNCK")
-    
-        df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
-    
-        col_dnck = "DNCK"
-    
-        if col_dnck not in df_dnck.columns:
-            st.error("❌ Không tìm thấy cột DNCK")
-            st.stop()
-    
-        # convert số
-        df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
-    
-        # ❗ KHÔNG lọc >0 nữa để tránh mất data
-        # df_dnck = df_dnck[df_dnck[col_dnck] > 0]
-    
-        # sort (NaN sẽ xuống dưới)
-        df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
-    
-        # KPI
-        st.metric("Tổng KH (có DNCK)", f"{df_dnck[col_dnck].notna().sum():,}")
-    
-        # hiển thị
-        st.dataframe(
-            format_dataframe(df_dnck, col_customer, col_manager),
-            use_container_width=True,
-            height=600,
-            hide_index=True
-        )
 
+    st.subheader("🏦 Khách hàng DNCK")
+
+    df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+
+    # 🔥 AUTO tìm cột DNCK
+    col_dnck = None
+    for col in df_dnck.columns:
+        if "DNCK" in col.upper():
+            col_dnck = col
+            break
+
+    if col_dnck is None:
+        st.error("❌ Không tìm thấy cột DNCK")
+        st.write(df_dnck.columns)  # debug luôn
+        st.stop()
+
+    # convert số
+    df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
+
+    # 👉 KHÔNG lọc để tránh mất data
+    # df_dnck = df_dnck[df_dnck[col_dnck] > 0]
+
+    # sort
+    df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
+
+    st.metric("Số khách DNCK", f"{df_dnck[col_dnck].notna().sum():,}")
+
+    st.dataframe(
+        format_dataframe(df_dnck, col_customer, col_manager),
+        use_container_width=True,
+        height=600,
+        hide_index=True
+    )
     # =========================
     # 5. TRUNG BÌNH DV / NGƯỜI
     # =========================
