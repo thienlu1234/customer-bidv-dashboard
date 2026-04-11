@@ -1,33 +1,33 @@
 import streamlit as st
 import pandas as pd
 
-def kpi_card(title, value):
-    st.markdown(f"""
-    <div class="kpi-card">
-        <div class="kpi-title">{title}</div>
-        <div class="kpi-value">{value}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
 st.set_page_config(layout="wide")
+
+# ======================
+# CSS GIAO DIỆN BIDV
+# ======================
 st.markdown("""
 <style>
-/* Sidebar nền xanh BIDV */
+
+/* Sidebar nền xanh */
 section[data-testid="stSidebar"] {
     background-color: #0E6F66;
 }
 
-/* Chữ trong sidebar màu trắng */
+/* Text sidebar */
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* Tiêu đề chính */
+/* Title */
 .main-title {
     font-size: 38px;
     font-weight: 700;
     color: #0E6F66;
     margin-bottom: 10px;
+}
+
+/* KPI CARD */
 .kpi-card {
     background-color: white;
     padding: 18px;
@@ -36,6 +36,7 @@ section[data-testid="stSidebar"] * {
     text-align: center;
 }
 
+/* KPI text */
 .kpi-title {
     font-size: 14px;
     color: gray;
@@ -45,11 +46,25 @@ section[data-testid="stSidebar"] * {
     font-size: 28px;
     font-weight: bold;
     color: #0E6F66;
-}    
 }
+
 </style>
 """, unsafe_allow_html=True)
 
+# ======================
+# HÀM KPI
+# ======================
+def kpi_card(title, value):
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-title">{title}</div>
+        <div class="kpi-value">{value}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ======================
+# HEADER (LOGO + TITLE)
+# ======================
 col_logo, col_title = st.columns([1, 6])
 
 with col_logo:
