@@ -464,19 +464,33 @@ if uploaded_file is not None:
     # =========================
     # 4. DNCK
     # =========================
-    elif menu == "🏦  DNCK":
-
-        st.subheader("🏦 Khách hàng cần chăm (DNCK)")
-
-        col_dnck = "DNCK"
-
+    elif menu == "🏦 DNCK":
+    
+        st.subheader("🏦 Khách hàng DNCK")
+    
+        # 🔥 chỉ lấy Active + New
         df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        col_dnck = "DNCK"
+    
+        # kiểm tra cột
+        if col_dnck not in df_dnck.columns:
+            st.error("❌ Không tìm thấy cột DNCK")
+            st.stop()
+    
+        # chuyển sang số
         df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
-
+    
+        # lọc khách có DNCK > 0 (có giá trị)
         df_dnck = df_dnck[df_dnck[col_dnck] > 0]
-
-        st.metric("Số khách", f"{len(df_dnck):,}")
-
+    
+        # 🔥 SORT từ lớn → nhỏ
+        df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
+    
+        # KPI
+        st.metric("Số khách DNCK", f"{len(df_dnck):,}")
+    
+        # hiển thị bảng
         st.dataframe(
             format_dataframe(df_dnck, col_customer, col_manager),
             use_container_width=True,
