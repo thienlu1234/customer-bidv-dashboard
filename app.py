@@ -10,34 +10,62 @@ st.set_page_config(layout="wide")
 st.markdown("""
 <style>
 
-/* Sidebar nền xanh */
+/* ============================= */
+/* BACKGROUND */
+/* ============================= */
+body {
+    background-color: #f5f7f9;
+}
+
+/* ============================= */
+/* SIDEBAR */
+/* ============================= */
 section[data-testid="stSidebar"] {
     background-color: #0E6F66;
 }
 
-/* Text sidebar */
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* Title */
+/* ============================= */
+/* MAIN TITLE */
+/* ============================= */
 .main-title {
     font-size: 38px;
     font-weight: 700;
     color: #0E6F66;
-    margin-bottom: 10px;
 }
 
+/* ============================= */
+/* SECTION TITLE */
+/* ============================= */
+.section-title {
+    color: #0E6F66;
+    font-size: 26px;
+    font-weight: 700;
+    border-left: 6px solid #F5C32C;
+    padding-left: 10px;
+    margin-top: 25px;
+}
+
+/* ============================= */
 /* KPI CARD */
+/* ============================= */
 .kpi-card {
-    background-color: white;
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
     padding: 18px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
     text-align: center;
+    transition: 0.3s;
 }
 
-/* KPI text */
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 10px 24px rgba(0,0,0,0.12);
+}
+
 .kpi-title {
     font-size: 14px;
     color: gray;
@@ -48,19 +76,81 @@ section[data-testid="stSidebar"] * {
     font-weight: bold;
     color: #0E6F66;
 }
-/* Header section */
-.section-title {
-    color: #0E6F66;
-    font-size: 26px;
-    font-weight: 700;
-    margin-top: 20px;
+
+/* ============================= */
+/* DATAFRAME */
+/* ============================= */
+[data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+[data-testid="stDataFrame"] table {
+    border-radius: 12px;
+}
+
+/* ============================= */
+/* SELECTBOX */
+/* ============================= */
+div[data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* hover */
+div[data-baseweb="select"]:hover {
+    border: 2px solid #F5C32C;
+}
+
+/* focus */
+div[data-baseweb="select"] > div {
+    border: 2px solid #0E6F66;
+}
+
+/* dropdown hover */
+li:hover {
+    background-color: #F5C32C !important;
+    color: black !important;
+}
+
+/* ============================= */
+/* METRIC */
+/* ============================= */
+[data-testid="stMetric"] {
+    background-color: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+}
+
+/* ============================= */
+/* BUTTON */
+/* ============================= */
+.stButton>button {
+    background-color: #F5C32C;
+    color: black;
+    border-radius: 8px;
+    border: none;
+}
+
+.stButton>button:hover {
+    background-color: #e0b12c;
+}
+
+/* ============================= */
+/* DIVIDER */
+/* ============================= */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #0E6F66, #F5C32C);
+    margin: 25px 0;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 # ======================
-# HÀM KPI
+# HÀM KPI CARD
 # ======================
 def kpi_card(title, value):
     st.markdown(f"""
@@ -70,35 +160,6 @@ def kpi_card(title, value):
     </div>
     """, unsafe_allow_html=True)
 
-# ======================
-# HEADER (LOGO + TITLE)
-# ======================
-col_logo, col_title = st.columns([1, 6])
-
-with col_logo:
-    st.image("logo_bidv.png", width=80)
-
-with col_title:
-    st.markdown(
-        '<div class="main-title">Dashboard Khách Hàng BIDV</div>',
-        unsafe_allow_html=True
-    )
-
-def kpi_box(title, value, color):
-    st.markdown(f"""
-    <div style="
-        background-color: {color};
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    ">
-        <div style="font-size:14px;">{title}</div>
-        <div style="font-size:28px; margin-top:5px;">{value}</div>
-    </div>
-    """, unsafe_allow_html=True)
 # ======================
 # MENU NGANG
 # ======================
@@ -235,7 +296,10 @@ if uploaded_file is not None:
     # ======================
     if menu == "📊  Tổng quan":
     
-        st.subheader("📌 Tổng quan khách hàng")
+        st.markdown(
+            '<div class="section-title">📌 Tổng quan khách hàng</div>',
+            unsafe_allow_html=True
+        )
     
         total = len(df)
         active = (df[col_status] == "Active").sum()
@@ -327,7 +391,10 @@ if uploaded_file is not None:
     # =========================
     elif menu == "🎯  Chăm sóc KH":
     
-        st.subheader("🎯 Phân loại theo HDVKKH_BQ")
+        st.markdown(
+            '<div class="section-title">🎯 Phân loại theo HDVKKH_BQ</div>',
+            unsafe_allow_html=True
+        )
     
         df_cs = df[df[col_status].isin(["Active", "New"])].copy()
     
@@ -436,7 +503,10 @@ if uploaded_file is not None:
     # =========================
     elif menu == "💰  HDVCKH_CK":
     
-        st.subheader("💰 Khách hàng cần chăm (HDVCKH_CK)")
+        st.markdown(
+            '<div class="section-title">💰 Khách hàng cần chăm (HDVCKH_CK)</div>',
+            unsafe_allow_html=True
+        )
     
         # 🔥 chỉ lấy Active + New (giống toàn hệ thống của bạn)
         df_ck = df[df[col_status].isin(["Active", "New"])].copy()
@@ -474,7 +544,10 @@ if uploaded_file is not None:
     # =========================
     elif menu == "🏦  DNCK":
     
-        st.subheader("🏦 Khách hàng DNCK")
+        st.markdown(
+            '<div class="section-title">🏦 Khách hàng DNCK</div>',
+            unsafe_allow_html=True
+        )
     
         col_dnck = "DNCK"
     
@@ -511,8 +584,10 @@ if uploaded_file is not None:
     # 5. TRUNG BÌNH DV / NGƯỜI
     # =========================
     elif menu == "📈  Trung bình DV/người":
-    
-        st.subheader("📈 Trung bình số dịch vụ / khách hàng")
+        st.markdown(
+            '<div class="section-title">📈 Trung bình số dịch vụ / khách hàng</div>',
+            unsafe_allow_html=True
+        )
     
         col_spdv = "TOTAL_SPDV"
     
@@ -680,7 +755,10 @@ if uploaded_file is not None:
     # =========================
     elif menu == "🏢  Theo phòng ban":
     
-        st.subheader("🏢 Hiệu suất theo phòng ban")
+        st.markdown(
+            '<div class="section-title">👨‍💼 Hiệu suất theo cán bộ quản lý</div>',
+            unsafe_allow_html=True
+        )
     
         # =========================
         # DATA
@@ -759,7 +837,10 @@ if uploaded_file is not None:
         ) 
     elif menu == "👶  Độ tuổi":
 
-        st.subheader("👶 Phân loại khách hàng theo độ tuổi")
+        st.markdown(
+            '<div class="section-title">👶 Phân loại khách hàng theo độ tuổi</div>',
+            unsafe_allow_html=True
+        )
     
         # chỉ lấy Active + New
         df_kh = df[df[col_status].isin(["Active", "New"])].copy()
@@ -803,7 +884,10 @@ if uploaded_file is not None:
    
     elif menu == "💼  Nghề nghiệp":
 
-        st.subheader("💼 Phân loại khách hàng theo nghề nghiệp")
+        st.markdown(
+            '<div class="section-title">💼 Phân loại khách hàng theo nghề nghiệp</div>',
+            unsafe_allow_html=True
+        )
     
         df_kh = df[df[col_status].isin(["Active", "New"])].copy()
     
