@@ -18,12 +18,27 @@ def load_data(file):
     name = file.name.lower()
 
     if name.endswith(".csv"):
-        return pd.read_csv(file)
+        df = pd.read_csv(file)
     elif name.endswith(".xlsx"):
-        return pd.read_excel(file)
+        df = pd.read_excel(file)
     elif name.endswith(".xlsb"):
-        return pd.read_excel(file, engine="pyxlsb")
-    return None
+        df = pd.read_excel(file, engine="pyxlsb")
+    else:
+        return None
+
+    # =========================
+    # FIX NGÀY EXCEL
+    # =========================
+    for col in df.columns:
+        if "NGAY" in str(col).upper():
+            try:
+                num = pd.to_numeric(df[col], errors="coerce")
+                if num.notna().sum() > 0:
+                    df[col] = pd.to_datetime("1899-12-30") + pd.to_timedelta(num, unit="D")
+            except:
+                pass
+
+    return df
 
 
 def find_column(df, keywords):
@@ -35,9 +50,30 @@ def find_column(df, keywords):
     return None
 
 
-def convert_excel_serial_to_date(series):
-    numeric_series = pd.to_numeric(series, errors="coerce")
-    return pd.to_datetime("1899-12-30") + pd.to_timedelta(numeric_series, unit="D")
+# =========================
+# FORMAT HIỂN THỊ
+# =========================
+def format_dataframe(df, col_customer=None, col_manager=None):
+    df_display = df.copy()
+
+    for col in df_display.columns:
+
+        # format ngày
+        if pd.api.types.is_datetime64_any_dtype(df_display[col]):
+            df_display[col] = df_display[col].dt.strftime("%d/%m/%Y")
+
+        # format số
+        elif df_display[col].dtype in ["float64", "int64"]:
+            if col not in [col_customer, col_manager]:
+                df_display[col] = df_display[col].apply(
+                    lambda x: f"{x:,.0f}" if pd.notnull(x) else ""
+                )
+            else:
+                df_display[col] = df_display[col].apply(
+                    lambda x: str(int(x)) if pd.notnull(x) else ""
+                )
+
+    return df_display
 
 
 # =========================
@@ -55,8 +91,6 @@ if uploaded_file is not None:
     col_status = find_column(df, ["TRANGTHAI", "STATUS"])
     col_customer = find_column(df, ["MA_KHACHHANG", "CIF"])
     col_manager = find_column(df, ["CANBO_QUANLY", "CBQL"])
-    col_open_date = find_column(df, ["NGAYMOCIF"])
-    col_open_year = find_column(df, ["NAMMOCIF"])
 
     if col_status is None:
         st.error("❌ Không tìm thấy cột trạng thái")
@@ -100,7 +134,7 @@ if uploaded_file is not None:
     # =========================
     elif menu == "🎯 Chăm sóc khách hàng":
 
-        st.subheader("🎯 Phân loại chăm sóc theo HDVKKH_BQ")
+        st.subheader("🎯 Phân loại theo HDVKKH_BQ")
 
         df_cs = df[df[col_status].isin(["Active", "New"])].copy()
 
@@ -115,83 +149,77 @@ if uploaded_file is not None:
         c1, c2, c3, c4 = st.columns(4)
 
         c1.metric("Dưới 5TR", f"{(df_cs[col_hdv] <= 5_000_000).sum():,}")
-        c2.metric("5TR - 20TR", f"{((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum():,}")
-        c3.metric("20TR - 50TR", f"{((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum():,}")
-        c4.metric("> 50TR", f"{(df_cs[col_hdv] > 50_000_000).sum():,}")
+        c2.metric("5-20TR", f"{((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum():,}")
+        c3.metric("20-50TR", f"{((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum():,}")
+        c4.metric(">50TR", f"{(df_cs[col_hdv] > 50_000_000).sum():,}")
 
-        option = st.selectbox(
-            "📌 Chọn nhóm",
-            ["Dưới 5TR", "5TR - 20TR", "20TR - 50TR", "> 50TR"]
-        )
+        option = st.selectbox("Chọn nhóm", ["<5TR", "5-20TR", "20-50TR", ">50TR"])
 
-        # FIX LỖI df_show
         df_show = df_cs.copy()
 
-        if option == "Dưới 5TR":
+        if option == "<5TR":
             df_show = df_cs[df_cs[col_hdv] <= 5_000_000]
-        elif option == "5TR - 20TR":
+        elif option == "5-20TR":
             df_show = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)]
-        elif option == "20TR - 50TR":
+        elif option == "20-50TR":
             df_show = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)]
         else:
             df_show = df_cs[df_cs[col_hdv] > 50_000_000]
 
         st.metric("Số khách", f"{len(df_show):,}")
 
-        st.dataframe(df_show, use_container_width=True, height=600, hide_index=True)
+        st.dataframe(
+            format_dataframe(df_show, col_customer, col_manager),
+            use_container_width=True,
+            height=600,
+            hide_index=True
+        )
 
     # =========================
     # 3. HDVCKH_CK
     # =========================
     elif menu == "💰 HDVCKH_CK":
 
-        st.subheader("💰 Khách hàng cần chăm sóc (HDVCKH_CK)")
+        st.subheader("💰 Khách hàng cần chăm (HDVCKH_CK)")
 
         col_ck = "HDVCKH_CK"
 
-        if col_ck not in df.columns:
-            st.error("❌ Không tìm thấy cột HDVCKH_CK")
-            st.stop()
-
         df_ck = df[df[col_status].isin(["Active", "New"])].copy()
-
         df_ck[col_ck] = pd.to_numeric(df_ck[col_ck], errors="coerce")
 
-        df_ck = df_ck[df_ck[col_ck].notna() & (df_ck[col_ck] > 0)]
+        df_ck = df_ck[df_ck[col_ck] > 0]
 
-        st.metric("Số khách cần chăm", f"{len(df_ck):,}")
+        st.metric("Số khách", f"{len(df_ck):,}")
 
-        st.dataframe(df_ck, use_container_width=True, height=600, hide_index=True)
+        st.dataframe(
+            format_dataframe(df_ck, col_customer, col_manager),
+            use_container_width=True,
+            height=600,
+            hide_index=True
+        )
+
     # =========================
     # 4. DNCK
     # =========================
     elif menu == "🏦 DNCK":
-    
-        st.subheader("🏦 Khách hàng cần chăm sóc (DNCK)")
-    
+
+        st.subheader("🏦 Khách hàng cần chăm (DNCK)")
+
         col_dnck = "DNCK"
-    
-        if col_dnck not in df.columns:
-            st.error("❌ Không tìm thấy cột DNCK")
-            st.stop()
-    
-        # 🔥 chỉ Active + New
+
         df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
-    
-        # chuyển sang số
         df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
-    
-        # lọc có dữ liệu
-        df_dnck = df_dnck[df_dnck[col_dnck].notna() & (df_dnck[col_dnck] > 0)]
-    
-        st.metric("Số khách cần chăm", f"{len(df_dnck):,}")
-    
+
+        df_dnck = df_dnck[df_dnck[col_dnck] > 0]
+
+        st.metric("Số khách", f"{len(df_dnck):,}")
+
         st.dataframe(
-            df_dnck,
+            format_dataframe(df_dnck, col_customer, col_manager),
             use_container_width=True,
             height=600,
             hide_index=True
-        )    
+        )
 
 else:
     st.info("👉 Upload file để bắt đầu")
