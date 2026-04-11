@@ -69,7 +69,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK"]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK"]
     )
 
     # =========================
@@ -162,6 +162,36 @@ if uploaded_file is not None:
         st.metric("Số khách cần chăm", f"{len(df_ck):,}")
 
         st.dataframe(df_ck, use_container_width=True, height=600, hide_index=True)
+    # =========================
+    # 4. DNCK
+    # =========================
+    elif menu == "🏦 DNCK":
+    
+        st.subheader("🏦 Khách hàng cần chăm sóc (DNCK)")
+    
+        col_dnck = "DNCK"
+    
+        if col_dnck not in df.columns:
+            st.error("❌ Không tìm thấy cột DNCK")
+            st.stop()
+    
+        # 🔥 chỉ Active + New
+        df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # chuyển sang số
+        df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
+    
+        # lọc có dữ liệu
+        df_dnck = df_dnck[df_dnck[col_dnck].notna() & (df_dnck[col_dnck] > 0)]
+    
+        st.metric("Số khách cần chăm", f"{len(df_dnck):,}")
+    
+        st.dataframe(
+            df_dnck,
+            use_container_width=True,
+            height=600,
+            hide_index=True
+        )    
 
 else:
     st.info("👉 Upload file để bắt đầu")
