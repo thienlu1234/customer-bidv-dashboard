@@ -432,16 +432,15 @@ if uploaded_file is not None:
 
         col_ck = "HDVCKH_CK"
 
-        df_ck = df[df[col_status].isin(["Active", "New"])].copy()
-        df_ck[col_ck] = pd.to_numeric(df_ck[col_ck], errors="coerce")
-
-        df_ck = df_ck[df_ck[col_ck] > 0]
-
-        st.metric("Số khách", f"{len(df_ck):,}")
-        df_show["HDVCKH_CK"] = pd.to_numeric(df_show["HDVCKH_CK"], errors="coerce")
-        df_show = df_show.sort_values(by="HDVCKH_CK", ascending=False)
+        if col_ck not in df_show.columns:
+            st.error("❌ Không tìm thấy cột HDVCKH_CK")
+            st.stop()
+        
+        df_show[col_ck] = pd.to_numeric(df_show[col_ck], errors="coerce")
+        df_show = df_show.sort_values(by=col_ck, ascending=False)
+        
         st.dataframe(
-            format_dataframe(df_ck, col_customer, col_manager),
+            format_dataframe(df_show, col_customer, col_manager),
             use_container_width=True,
             height=600,
             hide_index=True
