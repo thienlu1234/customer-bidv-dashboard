@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-
+from streamlit_option_menu import option_menu
 st.set_page_config(layout="wide")
 
 # ======================
@@ -75,7 +75,27 @@ with col_title:
         '<div class="main-title">Dashboard Khách Hàng BIDV</div>',
         unsafe_allow_html=True
     )
-
+# ======================
+# MENU NGANG
+# ======================
+menu = option_menu(
+    None,
+    ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý", "🏢 Theo phòng ban"],
+    icons=["bar-chart", "target", "cash", "bank", "graph-up", "person", "building"],
+    orientation="horizontal",
+    styles={
+        "container": {"background-color": "#0E6F66"},
+        "nav-link": {
+            "color": "white",
+            "font-size": "14px",
+            "text-align": "center",
+        },
+        "nav-link-selected": {
+            "background-color": "#F5C32C",
+            "color": "black",
+        },
+    }
+)
 # =========================
 # UPLOAD FILE
 # =========================
@@ -173,13 +193,7 @@ if uploaded_file is not None:
 
     df[col_status] = df[col_status].astype("string").str.strip()
 
-    # =========================
-    # MENU
-    # =========================
-    menu = st.sidebar.radio(
-        "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý", "🏢 Theo phòng ban"]
-    )
+    
 
     # =========================
     # 1. TỔNG QUAN
