@@ -107,7 +107,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý"]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý", "🏢 Theo phòng ban"]
     )
 
     # =========================
@@ -356,5 +356,87 @@ if uploaded_file is not None:
             use_container_width=True,
             hide_index=True
         )
+    # =========================
+    # THEO PHÒNG BAN
+    # =========================
+    elif menu == "🏢 Theo phòng ban":
+    
+        st.subheader("🏢 Hiệu suất theo phòng ban")
+    
+        # =========================
+        # DATA
+        # =========================
+        df_all = df.copy()
+        df_kh = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # kiểm tra cột
+        if "PHONG BAN" not in df.columns:
+            st.error("❌ Không tìm thấy cột PHONG BAN")
+            st.stop()
+    
+        # chuyển số
+        df_kh["TOTAL_SPDV"] = pd.to_numeric(df_kh["TOTAL_SPDV"], errors="coerce")
+        df_kh["HDVKKH_BQ"] = pd.to_numeric(df_kh["HDVKKH_BQ"], errors="coerce")
+    
+        # =========================
+        # GROUP ALL KH
+        # =========================
+        group_all = df_all.groupby("PHONG BAN").agg(
+            tong_kh_all=("PHONG BAN", "count")
+        ).reset_index()
+    
+        # =========================
+        # GROUP ACTIVE + NEW
+        # =========================
+        group_active = df_kh.groupby("PHONG BAN").agg(
+            tong_kh_active=("PHONG BAN", "count"),
+            tong_spdv=("TOTAL_SPDV", "sum"),
+            tong_hdv=("HDVKKH_BQ", "sum")
+        ).reset_index()
+    
+        # =========================
+        # MERGE
+        # =========================
+        group_pb = pd.merge(
+            group_all,
+            group_active,
+            on="PHONG BAN",
+            how="left"
+        ).fillna(0)
+    
+        # =========================
+        # KPI
+        # =========================
+        group_pb["dv_trung_binh"] = group_pb["tong_spdv"] / group_pb["tong_kh_active"].replace(0, 1)
+    
+        # =========================
+        # FORMAT
+        # =========================
+        group_pb["Tổng KH"] = group_pb["tong_kh_all"].apply(lambda x: f"{int(x):,}")
+        group_pb["KH Active+New"] = group_pb["tong_kh_active"].apply(lambda x: f"{int(x):,}")
+        group_pb["Tổng DV"] = group_pb["tong_spdv"].apply(lambda x: f"{int(x):,}")
+        group_pb["Tổng HDV"] = group_pb["tong_hdv"].apply(lambda x: f"{int(x):,}")
+        group_pb["DV/KH"] = group_pb["dv_trung_binh"].apply(lambda x: f"{x:.2f}")
+    
+        # =========================
+        # SORT
+        # =========================
+        group_pb = group_pb.sort_values(by="tong_kh_all", ascending=False)
+    
+        # =========================
+        # HIỂN THỊ
+        # =========================
+        st.dataframe(
+            group_pb[[
+                "PHONG BAN",
+                "Tổng KH",
+                "KH Active+New",
+                "Tổng DV",
+                "Tổng HDV",
+                "DV/KH"
+            ]],
+            use_container_width=True,
+            hide_index=True
+        )    
 else:
     st.info("👉 Upload file để bắt đầu")
