@@ -76,6 +76,22 @@ with col_title:
         '<div class="main-title">Dashboard Khách Hàng BIDV</div>',
         unsafe_allow_html=True
     )
+
+def kpi_box(title, value, color):
+    st.markdown(f"""
+    <div style="
+        background-color: {color};
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    ">
+        <div style="font-size:14px;">{title}</div>
+        <div style="font-size:28px; margin-top:5px;">{value}</div>
+    </div>
+    """, unsafe_allow_html=True)
 # ======================
 # MENU NGANG
 # ======================
@@ -303,30 +319,53 @@ if uploaded_file is not None:
     # 2. CHĂM SÓC KHÁCH HÀNG
     # =========================
     elif menu == "🎯  Chăm sóc KH":
-
+    
         st.subheader("🎯 Phân loại theo HDVKKH_BQ")
-
+    
         df_cs = df[df[col_status].isin(["Active", "New"])].copy()
-
+    
         col_hdv = "HDVKKH_BQ"
-
+    
         if col_hdv not in df_cs.columns:
             st.error("❌ Không tìm thấy cột HDVKKH_BQ")
             st.stop()
-
+    
         df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
-
+    
+        # =========================
+        # TÍNH SỐ LIỆU
+        # =========================
+        duoi_5 = (df_cs[col_hdv] <= 5_000_000).sum()
+        tu_5_20 = ((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum()
+        tu_20_50 = ((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum()
+        tren_50 = (df_cs[col_hdv] > 50_000_000).sum()
+    
+        # =========================
+        # KPI CARD ĐẸP
+        # =========================
+        st.markdown("### 📊 Phân nhóm khách hàng")
+    
         c1, c2, c3, c4 = st.columns(4)
-
-        c1.metric("Dưới 5TR", f"{(df_cs[col_hdv] <= 5_000_000).sum():,}")
-        c2.metric("5-20TR", f"{((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum():,}")
-        c3.metric("20-50TR", f"{((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum():,}")
-        c4.metric(">50TR", f"{(df_cs[col_hdv] > 50_000_000).sum():,}")
-
-        option = st.selectbox("Chọn nhóm", ["<5TR", "5-20TR", "20-50TR", ">50TR"])
-
+    
+        with c1:
+            kpi_card("💚 < 5TR", f"{duoi_5:,}")
+        with c2:
+            kpi_card("💰 5 - 20TR", f"{tu_5_20:,}")
+        with c3:
+            kpi_card("🏆 20 - 50TR", f"{tu_20_50:,}")
+        with c4:
+            kpi_card("🔥 > 50TR", f"{tren_50:,}")
+    
+        # =========================
+        # SELECT BOX
+        # =========================
+        option = st.selectbox(
+            "📌 Chọn nhóm khách hàng",
+            ["<5TR", "5-20TR", "20-50TR", ">50TR"]
+        )
+    
         df_show = df_cs.copy()
-
+    
         if option == "<5TR":
             df_show = df_cs[df_cs[col_hdv] <= 5_000_000]
         elif option == "5-20TR":
@@ -335,17 +374,56 @@ if uploaded_file is not None:
             df_show = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)]
         else:
             df_show = df_cs[df_cs[col_hdv] > 50_000_000]
-
-        st.metric("Số khách", f"{len(df_show):,}")
-
+    
+        # =========================
+        # KPI KẾT QUẢ
+        # =========================
+        st.markdown("### 📊 Kết quả")
+    
+        col_kq1, col_kq2 = st.columns([1, 2])
+    
+        with col_kq1:
+            kpi_card("👥 Số khách", f"{len(df_show):,}")
+    
+        with col_kq2:
+            st.success(f"👉 Nhóm **{option}** có **{len(df_show):,} khách hàng**")
+    
+        # =========================
+        # BIỂU ĐỒ MINI (ĐẸP)
+        # =========================
+        import plotly.express as px
+    
+        df_chart = pd.DataFrame({
+            "Nhóm": ["<5TR", "5-20TR", "20-50TR", ">50TR"],
+            "Số KH": [duoi_5, tu_5_20, tu_20_50, tren_50]
+        })
+    
+        fig = px.bar(
+            df_chart,
+            x="Nhóm",
+            y="Số KH",
+            color="Nhóm",
+            text="Số KH"
+        )
+    
+        fig.update_layout(
+            showlegend=False,
+            margin=dict(t=30, b=20)
+        )
+    
+        st.plotly_chart(fig, use_container_width=True)
+    
+        # =========================
+        # DATA TABLE (GIỮ NGUYÊN)
+        # =========================
+        st.markdown("### 📋 Danh sách khách hàng")
+    
         st.dataframe(
             format_dataframe(df_show, col_customer, col_manager),
             use_container_width=True,
             height=600,
             hide_index=True
         )
-
-    # =========================
     # 3. HDVCKH_CK
     # =========================
     elif menu == "💰  HDVCKH_CK":
