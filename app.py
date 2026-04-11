@@ -553,7 +553,7 @@ if uploaded_file is not None:
         df_kh = df[df[col_status].isin(["Active", "New"])].copy()
     
         # tìm cột tuổi
-        col_age = None
+        col_age = "NAM SINH"
         for col in df.columns:
             if "TUOI" in col.upper() or "AGE" in col.upper():
                 col_age = col
@@ -588,6 +588,7 @@ if uploaded_file is not None:
         result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
     
         st.dataframe(result, use_container_width=True, hide_index=True)
+   
     elif menu == "💼  Nghề nghiệp":
 
         st.subheader("💼 Phân loại khách hàng theo nghề nghiệp")
