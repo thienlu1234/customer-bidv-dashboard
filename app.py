@@ -107,7 +107,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người"]]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người"]
     )
 
     # =========================
