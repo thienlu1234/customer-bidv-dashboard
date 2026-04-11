@@ -658,7 +658,7 @@ if uploaded_file is not None:
     
         # ===== TABLE =====
         with col1:
-            st.markdown("### 📋 Bảng phân bố")
+            
             st.dataframe(
                 dv_dist,
                 use_container_width=True,
