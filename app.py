@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_option_menu import option_menu
+import plotly.graph_objects as go
 st.set_page_config(layout="wide")
 
 # ======================
@@ -206,39 +207,88 @@ if uploaded_file is not None:
 
     
 
-    # =========================
-    # 1. TỔNG QUAN
-    # =========================
+    # ======================
+    # 📊 TỔNG QUAN
+    # ======================
     if menu == "📊  Tổng quan":
-
+    
         st.subheader("📌 Tổng quan khách hàng")
-
+    
         total = len(df)
         active = (df[col_status] == "Active").sum()
         new = (df[col_status] == "New").sum()
         frozen = (df[col_status] == "Frozen").sum()
         dormant = (df[col_status] == "Dormant").sum()
         nan_count = df[col_status].isna().sum()
-
+    
+        # ======================
+        # KPI
+        # ======================
         c1, c2, c3, c4, c5, c6 = st.columns(6)
-
+    
         with c1:
             kpi_card("👥 Tổng KH", f"{total:,}")
-        
         with c2:
             kpi_card("🔥 Active", f"{active:,}")
-        
         with c3:
             kpi_card("🆕 New", f"{new:,}")
-        
         with c4:
             kpi_card("❄️ Frozen", f"{frozen:,}")
-        
         with c5:
             kpi_card("😴 Dormant", f"{dormant:,}")
-        
         with c6:
             kpi_card("❓ NaN", f"{nan_count:,}")
+    
+        # ======================
+        # BIỂU ĐỒ TRÒN (ĐẸP)
+        # ======================
+        st.markdown("### 📊 Tỷ lệ khách hàng")
+    
+        labels = ["🔥 Active", "🆕 New", "❄️ Frozen", "😴 Dormant"]
+        values = [active, new, frozen, dormant]
+    
+        fig = go.Figure(data=[go.Pie(
+            labels=labels,
+            values=values,
+            hole=0.4,  # donut
+    
+            # hiệu ứng nổi
+            pull=[0.08, 0.1, 0, 0],
+    
+            marker=dict(
+                colors=[
+                    "#00A65A",  # xanh lá
+                    "#F5C32C",  # vàng
+                    "#00BFFF",  # xanh dương
+                    "#FF6B6B"   # đỏ
+                ],
+                line=dict(color="white", width=2)
+            ),
+    
+            textinfo="label+percent",
+            textfont=dict(size=14)
+        )])
+    
+        fig.update_layout(
+            title={
+                "text": "Phân bổ trạng thái khách hàng",
+                "x": 0.5
+            },
+            margin=dict(t=50, b=20)
+        )
+    
+        st.plotly_chart(fig, use_container_width=True)
+    
+        # ======================
+        # INSIGHT NHANH
+        # ======================
+        st.markdown("### 💡 Insight nhanh")
+    
+        i1, i2, i3 = st.columns(3)
+    
+        i1.metric("Tỷ lệ Active", f"{active/total:.1%}")
+        i2.metric("Tỷ lệ Frozen", f"{frozen/total:.1%}")
+        i3.metric("Tỷ lệ Dormant", f"{dormant/total:.1%}")
 
     # =========================
     # 2. CHĂM SÓC KHÁCH HÀNG
