@@ -465,7 +465,7 @@ if uploaded_file is not None:
     # =========================
     # 4. DNCK
     # =========================
-    elif menu == "🏦 DNCK":
+    elif menu == "🏦  DNCK":
     
         st.subheader("🏦 Khách hàng DNCK")
     
