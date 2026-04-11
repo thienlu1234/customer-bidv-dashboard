@@ -80,19 +80,30 @@ with col_title:
 # ======================
 menu = option_menu(
     None,
-    ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý", "🏢 Theo phòng ban"],
+    ["📊  Tổng quan", "🎯  Chăm sóc KH", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Theo cán bộ", "🏢  Theo phòng ban"],
     
     orientation="horizontal",
     styles={
-        "container": {"background-color": "#0E6F66"},
+        "container": {
+            "background-color": "#0E6F66",
+            "padding": "8px",
+            "border-radius": "12px"
+        },
         "nav-link": {
             "color": "white",
-            "font-size": "16px",
+            "font-size": "15px",
             "text-align": "center",
+            "font-family": "Arial, sans-serif",
+            "font-weight": "500",
+            "padding": "10px 14px",
+            "white-space": "nowrap",
         },
         "nav-link-selected": {
             "background-color": "#F5C32C",
             "color": "black",
+            "font-family": "Arial, sans-serif",
+            "font-weight": "600",
+            "border-radius": "10px",
         },
     }
 )
@@ -198,7 +209,7 @@ if uploaded_file is not None:
     # =========================
     # 1. TỔNG QUAN
     # =========================
-    if menu == "📊 Tổng quan":
+    if menu == "📊  Tổng quan":
 
         st.subheader("📌 Tổng quan khách hàng")
 
@@ -232,7 +243,7 @@ if uploaded_file is not None:
     # =========================
     # 2. CHĂM SÓC KHÁCH HÀNG
     # =========================
-    elif menu == "🎯 Chăm sóc khách hàng":
+    elif menu == "🎯  Chăm sóc khách hàng":
 
         st.subheader("🎯 Phân loại theo HDVKKH_BQ")
 
@@ -278,7 +289,7 @@ if uploaded_file is not None:
     # =========================
     # 3. HDVCKH_CK
     # =========================
-    elif menu == "💰 HDVCKH_CK":
+    elif menu == "💰  HDVCKH_CK":
 
         st.subheader("💰 Khách hàng cần chăm (HDVCKH_CK)")
 
@@ -301,7 +312,7 @@ if uploaded_file is not None:
     # =========================
     # 4. DNCK
     # =========================
-    elif menu == "🏦 DNCK":
+    elif menu == "🏦  DNCK":
 
         st.subheader("🏦 Khách hàng cần chăm (DNCK)")
 
@@ -324,7 +335,7 @@ if uploaded_file is not None:
     # =========================
     # 5. TRUNG BÌNH DV / NGƯỜI
     # =========================
-    elif menu == "📈 Trung bình DV/ người":
+    elif menu == "📈  Trung bình DV/ người":
     
         st.subheader("📈 Trung bình số dịch vụ / khách hàng")
     
@@ -372,7 +383,7 @@ if uploaded_file is not None:
     # =========================
     # THEO CÁN BỘ QUẢN LÝ
     # =========================
-    elif menu == "👨‍💼 Theo cán bộ quản lý":
+    elif menu == "👨‍💼  Theo cán bộ quản lý":
     
         st.subheader("👨‍💼 Hiệu suất theo cán bộ quản lý")
     
@@ -455,7 +466,7 @@ if uploaded_file is not None:
     # =========================
     # THEO PHÒNG BAN
     # =========================
-    elif menu == "🏢 Theo phòng ban":
+    elif menu == "🏢  Theo phòng ban":
     
         st.subheader("🏢 Hiệu suất theo phòng ban")
     
