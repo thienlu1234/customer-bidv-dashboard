@@ -48,6 +48,13 @@ section[data-testid="stSidebar"] * {
     font-weight: bold;
     color: #0E6F66;
 }
+/* Header section */
+.section-title {
+    color: #0E6F66;
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 20px;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -553,7 +560,10 @@ if uploaded_file is not None:
     # =========================
     elif menu == "👨‍💼  Theo cán bộ":
     
-        st.subheader("👨‍💼 Hiệu suất theo cán bộ quản lý")
+        st.markdown(
+            '<div class="section-title">👨‍💼 Hiệu suất theo cán bộ quản lý</div>',
+            unsafe_allow_html=True
+        )
     
         # =========================
         # DATA
@@ -636,7 +646,10 @@ if uploaded_file is not None:
         # 🔥 CHI TIẾT KHÁCH THEO CÁN BỘ
         # =========================
         st.markdown("---")
-        st.subheader("🔍 Chi tiết khách hàng theo cán bộ")
+        st.markdown(
+            '<div class="section-title">🔍 Chi tiết khách hàng theo cán bộ</div>',
+            unsafe_allow_html=True
+        )
     
         # danh sách cán bộ
         list_cb = group_cbql["HO VA TEN"].unique()
