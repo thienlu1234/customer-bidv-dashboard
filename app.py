@@ -107,7 +107,7 @@ if uploaded_file is not None:
     # =========================
     menu = st.sidebar.radio(
         "📂 Chọn chức năng",
-        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người"]
+        ["📊 Tổng quan", "🎯 Chăm sóc khách hàng", "💰 HDVCKH_CK", "🏦 DNCK", "📈 Trung bình DV/ người", "👨‍💼 Theo cán bộ quản lý"]
     )
 
     # =========================
@@ -273,5 +273,62 @@ if uploaded_file is not None:
             height=600,
             hide_index=True
         )
+    # =========================
+    # THEO CÁN BỘ QUẢN LÝ
+    # =========================
+    elif menu == "👨‍💼 Theo cán bộ quản lý":
+    
+        st.subheader("👨‍💼 Hiệu suất theo cán bộ quản lý")
+    
+        # 🔥 chỉ lấy Active + New
+        df_kh = df[df[col_status].isin(["Active", "New"])].copy()
+    
+        # kiểm tra cột cần thiết
+        required_cols = ["CANBO_QUANLY", "HO VA TEN", "TOTAL_SPDV", "HDVKKH_BQ"]
+    
+        for col in required_cols:
+            if col not in df.columns:
+                st.error(f"❌ Thiếu cột: {col}")
+                st.stop()
+    
+        # chuyển sang số
+        df_kh["TOTAL_SPDV"] = pd.to_numeric(df_kh["TOTAL_SPDV"], errors="coerce")
+        df_kh["HDVKKH_BQ"] = pd.to_numeric(df_kh["HDVKKH_BQ"], errors="coerce")
+    
+        # =========================
+        # GROUP BY
+        # =========================
+        group_cbql = df_kh.groupby(["CANBO_QUANLY", "HO VA TEN"]).agg(
+            tong_kh=("CANBO_QUANLY", "count"),
+            tong_spdv=("TOTAL_SPDV", "sum"),
+            tong_hdv=("HDVKKH_BQ", "sum")
+        ).reset_index()
+    
+        # trung bình DV / KH
+        group_cbql["dv_trung_binh"] = group_cbql["tong_spdv"] / group_cbql["tong_kh"]
+    
+        # =========================
+        # FORMAT HIỂN THỊ
+        # =========================
+        group_cbql["Tổng KH"] = group_cbql["tong_kh"].apply(lambda x: f"{int(x):,}")
+        group_cbql["Tổng DV"] = group_cbql["tong_spdv"].apply(lambda x: f"{int(x):,}")
+        group_cbql["Tổng HDV"] = group_cbql["tong_hdv"].apply(lambda x: f"{int(x):,}")
+        group_cbql["DV/KH"] = group_cbql["dv_trung_binh"].apply(lambda x: f"{x:.2f}")
+    
+        # =========================
+        # HIỂN THỊ KPI TABLE
+        # =========================
+        st.dataframe(
+            group_cbql[[
+                "CANBO_QUANLY",
+                "HO VA TEN",
+                "Tổng KH",
+                "Tổng DV",
+                "Tổng HDV",
+                "DV/KH"
+            ]].sort_values(by="Tổng HDV", ascending=False),
+            use_container_width=True,
+            hide_index=True
+        )        
 else:
     st.info("👉 Upload file để bắt đầu")
