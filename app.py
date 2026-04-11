@@ -1,6 +1,14 @@
 import streamlit as st
 import pandas as pd
 
+def kpi_card(title, value):
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-title">{title}</div>
+        <div class="kpi-value">{value}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 st.set_page_config(layout="wide")
 st.markdown("""
 <style>
@@ -20,6 +28,24 @@ section[data-testid="stSidebar"] * {
     font-weight: 700;
     color: #0E6F66;
     margin-bottom: 10px;
+.kpi-card {
+    background-color: white;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.kpi-title {
+    font-size: 14px;
+    color: gray;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0E6F66;
+}    
 }
 </style>
 """, unsafe_allow_html=True)
@@ -156,12 +182,23 @@ if uploaded_file is not None:
 
         c1, c2, c3, c4, c5, c6 = st.columns(6)
 
-        c1.metric("Tổng KH", f"{total:,}")
-        c2.metric("Active", f"{active:,}")
-        c3.metric("New", f"{new:,}")
-        c4.metric("Frozen", f"{frozen:,}")
-        c5.metric("Dormant", f"{dormant:,}")
-        c6.metric("NaN", f"{nan_count:,}")
+        with c1:
+            kpi_card("👥 Tổng KH", f"{total:,}")
+        
+        with c2:
+            kpi_card("🔥 Active", f"{active:,}")
+        
+        with c3:
+            kpi_card("🆕 New", f"{new:,}")
+        
+        with c4:
+            kpi_card("❄️ Frozen", f"{frozen:,}")
+        
+        with c5:
+            kpi_card("😴 Dormant", f"{dormant:,}")
+        
+        with c6:
+            kpi_card("❓ NaN", f"{nan_count:,}")
 
     # =========================
     # 2. CHĂM SÓC KHÁCH HÀNG
