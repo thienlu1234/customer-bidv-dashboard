@@ -5,6 +5,14 @@ import plotly.graph_objects as go
 import os 
 st.set_page_config(layout="wide")
 
+def find_column(df, keywords):
+    for col in df.columns:
+        col_upper = str(col).upper()
+        for kw in keywords:
+            if kw in col_upper:
+                return col
+    return None
+
 # ======================
 # CSS GIAO DIỆN BIDV
 # ======================
@@ -306,13 +314,7 @@ df = st.session_state.df_processed
     
 
 
-def find_column(df, keywords):
-    for col in df.columns:
-        col_upper = str(col).upper()
-        for kw in keywords:
-            if kw in col_upper:
-                return col
-    return None
+
 
 
 # =========================
