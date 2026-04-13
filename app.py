@@ -1010,4 +1010,4 @@ elif menu == "💼  Nghề nghiệp":
 
     st.dataframe(result, use_container_width=True, hide_index=True)
 else:
-st.info("👉 Upload file để bắt đầu")
+    st.info("👉 Upload file để bắt đầu")
