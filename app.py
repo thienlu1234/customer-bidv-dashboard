@@ -323,9 +323,7 @@ def format_dataframe(df, col_customer=None, col_manager=None):
 # =========================
 # MAIN
 # =========================
-
-
-    if df is None:
+if df is None:
         st.error("❌ Không đọc được file")
         st.stop()
 
@@ -341,6 +339,8 @@ def format_dataframe(df, col_customer=None, col_manager=None):
 
     df[col_status] = df[col_status].astype("string").str.strip()
 
+
+    
     
 
     # ======================
