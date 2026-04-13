@@ -266,19 +266,7 @@ else:
     st.stop()
 
 
-    # =========================
-    # FIX NGÀY EXCEL
-    # =========================
-    for col in df.columns:
-        if "NGAY" in str(col).upper():
-            try:
-                num = pd.to_numeric(df[col], errors="coerce")
-                if num.notna().sum() > 0:
-                    df[col] = pd.to_datetime("1899-12-30") + pd.to_timedelta(num, unit="D")
-            except:
-                pass
-
-    return df
+    
 
 
 def find_column(df, keywords):
