@@ -214,16 +214,16 @@ menu = option_menu(
 def load_data(file):
 
     try:
-        df = pd.read_excel(file)
+        df = pd.read_excel(file).copy()
     except:
         try:
-            df = pd.read_excel(file, engine="pyxlsb")
+            df = pd.read_excel(file, engine="pyxlsb").copy()
         except:
             try:
-                df = pd.read_csv(file)
+                df = pd.read_csv(file).copy()
             except:
                 return None
-
+    df.columns = [str(c).strip().upper() for c in df.columns]
     return df
 
 
@@ -250,43 +250,27 @@ with col2:
             st.warning("⚠️ Đã tắt dữ liệu")
             st.rerun()
 
-# ======================
-# LOAD DATA FUNCTION
-# ======================
-@st.cache_data
-def load_data(file):
 
-    try:
-        df = pd.read_excel(file).copy()
-    except:
-        try:
-            df = pd.read_excel(file, engine="pyxlsb").copy()
-        except:
-            try:
-                df = pd.read_csv(file).copy()
-            except:
-                return None
-    df.columns = [str(c).strip().upper() for c in df.columns]            
-
-    return df
 
 # ======================
-# SAVE + LOAD (CHỈ LOAD 1 LẦN)
+# SAVE + LOAD (PRO MAX)
 # ======================
 if uploaded_file is not None:
-    # lưu file
+
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    # load vào memory (QUAN TRỌNG)
+    # 🔥 load 1 lần duy nhất
     st.session_state.df = load_data(uploaded_file)
 
     st.success("✅ Đã upload dữ liệu")
 
+
 # ======================
-# LẤY DATA (KHÔNG LOAD LẠI)
+# GET DATA (KHÔNG LOAD LẠI)
 # ======================
 if "df" not in st.session_state:
+
     if os.path.exists(file_path):
         with open(file_path, "rb") as f:
             st.session_state.df = load_data(f)
@@ -294,9 +278,30 @@ if "df" not in st.session_state:
         st.info("📌 Chưa có dữ liệu. Vui lòng upload file.")
         st.stop()
 
-# 👉 dùng df từ memory
 df = st.session_state.df
 
+# ======================
+# ⚡ TỐI ƯU DATA (SIÊU QUAN TRỌNG)
+# ======================
+if "df_processed" not in st.session_state:
+
+    df_temp = df.copy()
+
+    # chuẩn hóa status 1 lần
+    col_status = find_column(df_temp, ["TRANGTHAI", "STATUS"])
+    if col_status:
+        df_temp[col_status] = df_temp[col_status].astype("string").str.strip()
+
+    # chuyển numeric 1 lần
+    numeric_cols = ["TOTAL_SPDV", "HDVKKH_BQ", "HDVCKH_CK", "DNCK"]
+
+    for col in numeric_cols:
+        if col in df_temp.columns:
+            df_temp[col] = pd.to_numeric(df_temp[col], errors="coerce")
+
+    st.session_state.df_processed = df_temp
+
+df = st.session_state.df_processed
 
     
 
