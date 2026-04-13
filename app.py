@@ -257,13 +257,13 @@ with col2:
 def load_data(file):
 
     try:
-        df = pd.read_excel(file)
+        df = pd.read_excel(file).copy()
     except:
         try:
-            df = pd.read_excel(file, engine="pyxlsb")
+            df = pd.read_excel(file, engine="pyxlsb").copy()
         except:
             try:
-                df = pd.read_csv(file)
+                df = pd.read_csv(file).copy()
             except:
                 return None
     df.columns = [str(c).strip().upper() for c in df.columns]            
