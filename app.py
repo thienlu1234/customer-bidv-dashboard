@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from streamlit_option_menu import option_menu
 import plotly.graph_objects as go
+import os 
 st.set_page_config(layout="wide")
 
 # ======================
@@ -207,25 +208,72 @@ menu = option_menu(
     }
 )
 # =========================
-# UPLOAD FILE
-# =========================
-uploaded_file = st.file_uploader(
-    "Upload file dữ liệu",
-    type=["xlsx", "csv", "xlsb"]
-)
+# LOAD / SHARE DATA
+# ======================
+file_path = "saved_data.xlsx"
+
+st.markdown("---")
+
+col1, col2 = st.columns([3,1])
+
+with col1:
+    uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
+
+with col2:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if os.path.exists(file_path):
+        if st.button("🗑️ Tắt dữ liệu"):
+            os.remove(file_path)
+            st.warning("⚠️ Đã xóa dữ liệu")
+            st.rerun()
+
+# ======================
+# SAVE FILE
+# ======================
+if uploaded_file is not None:
+    with open(file_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    st.success("✅ Đã upload dữ liệu")
+
+# ======================
+# LOAD DATA
+# ======================
+if os.path.exists(file_path):
+    df = load_data(open(file_path, "rb"))
+else:
+    st.info("📌 Chưa có dữ liệu. Vui lòng upload file.")
+    st.stop()
 
 @st.cache_data
 def load_data(file):
-    name = file.name.lower()
 
-    if name.endswith(".csv"):
-        df = pd.read_csv(file)
-    elif name.endswith(".xlsx"):
+    try:
+        # thử đọc excel thường
         df = pd.read_excel(file)
-    elif name.endswith(".xlsb"):
-        df = pd.read_excel(file, engine="pyxlsb")
-    else:
-        return None
+    except:
+        try:
+            # nếu lỗi → thử xlsb
+            df = pd.read_excel(file, engine="pyxlsb")
+        except:
+            try:
+                # nếu lỗi nữa → thử csv
+                df = pd.read_csv(file)
+            except:
+                return None
+
+    # =========================
+    # FIX NGÀY EXCEL
+    # =========================
+    for col in df.columns:
+        if "NGAY" in str(col).upper():
+            try:
+                num = pd.to_numeric(df[col], errors="coerce")
+                if num.notna().sum() > 0:
+                    df[col] = pd.to_datetime("1899-12-30") + pd.to_timedelta(num, unit="D")
+            except:
+                pass
+
+    return df
 
     # =========================
     # FIX NGÀY EXCEL
@@ -284,8 +332,7 @@ def format_dataframe(df, col_customer=None, col_manager=None):
 # =========================
 # MAIN
 # =========================
-if uploaded_file is not None:
-    df = load_data(uploaded_file)
+
 
     if df is None:
         st.error("❌ Không đọc được file")
