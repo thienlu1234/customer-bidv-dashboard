@@ -208,6 +208,26 @@ menu = option_menu(
     }
 )
 # =========================
+# LOAD DATA FUNCTION (PHẢI ĐẶT LÊN TRÊN)
+# =========================
+@st.cache_data
+def load_data(file):
+
+    try:
+        df = pd.read_excel(file)
+    except:
+        try:
+            df = pd.read_excel(file, engine="pyxlsb")
+        except:
+            try:
+                df = pd.read_csv(file)
+            except:
+                return None
+
+    return df
+
+
+# ======================
 # LOAD / SHARE DATA
 # ======================
 file_path = "saved_data.xlsx"
@@ -239,41 +259,12 @@ if uploaded_file is not None:
 # LOAD DATA
 # ======================
 if os.path.exists(file_path):
-    df = load_data(open(file_path, "rb"))
+    with open(file_path, "rb") as f:
+        df = load_data(f)
 else:
     st.info("📌 Chưa có dữ liệu. Vui lòng upload file.")
     st.stop()
 
-@st.cache_data
-def load_data(file):
-
-    try:
-        # thử đọc excel thường
-        df = pd.read_excel(file)
-    except:
-        try:
-            # nếu lỗi → thử xlsb
-            df = pd.read_excel(file, engine="pyxlsb")
-        except:
-            try:
-                # nếu lỗi nữa → thử csv
-                df = pd.read_csv(file)
-            except:
-                return None
-
-    # =========================
-    # FIX NGÀY EXCEL
-    # =========================
-    for col in df.columns:
-        if "NGAY" in str(col).upper():
-            try:
-                num = pd.to_numeric(df[col], errors="coerce")
-                if num.notna().sum() > 0:
-                    df[col] = pd.to_datetime("1899-12-30") + pd.to_timedelta(num, unit="D")
-            except:
-                pass
-
-    return df
 
     # =========================
     # FIX NGÀY EXCEL
