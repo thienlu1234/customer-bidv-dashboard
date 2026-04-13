@@ -324,20 +324,20 @@ def format_dataframe(df, col_customer=None, col_manager=None):
 # MAIN
 # =========================
 if df is None:
-        st.error("❌ Không đọc được file")
-        st.stop()
+    st.error("❌ Không đọc được file")
+    st.stop()
 
-    df.columns = [str(c).strip().upper() for c in df.columns]
+df.columns = [str(c).strip().upper() for c in df.columns]
 
-    col_status = find_column(df, ["TRANGTHAI", "STATUS"])
-    col_customer = find_column(df, ["MA_KHACHHANG", "CIF"])
-    col_manager = find_column(df, ["CANBO_QUANLY", "CBQL"])
+col_status = find_column(df, ["TRANGTHAI", "STATUS"])
+col_customer = find_column(df, ["MA_KHACHHANG", "CIF"])
+col_manager = find_column(df, ["CANBO_QUANLY", "CBQL"])
 
-    if col_status is None:
-        st.error("❌ Không tìm thấy cột trạng thái")
-        st.stop()
+if col_status is None:    
+    st.error("❌ Không tìm thấy cột trạng thái")
+    st.stop()      
 
-    df[col_status] = df[col_status].astype("string").str.strip()
+df[col_status] = df[col_status].astype("string").str.strip()             
 
 
     
