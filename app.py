@@ -228,7 +228,7 @@ def load_data(file):
 
 
 # ======================
-# LOAD / SHARE DATA
+# LOAD / SHARE DATA (FAST VERSION)
 # ======================
 file_path = "saved_data.xlsx"
 
@@ -241,29 +241,61 @@ with col1:
 
 with col2:
     st.markdown("<br>", unsafe_allow_html=True)
-    if os.path.exists(file_path):
+    if "df" in st.session_state:
         if st.button("🗑️ Tắt dữ liệu"):
-            os.remove(file_path)
-            st.warning("⚠️ Đã xóa dữ liệu")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+            st.session_state.pop("df", None)
+            st.warning("⚠️ Đã tắt dữ liệu")
             st.rerun()
 
 # ======================
-# SAVE FILE
+# LOAD DATA FUNCTION
+# ======================
+@st.cache_data
+def load_data(file):
+
+    try:
+        df = pd.read_excel(file)
+    except:
+        try:
+            df = pd.read_excel(file, engine="pyxlsb")
+        except:
+            try:
+                df = pd.read_csv(file)
+            except:
+                return None
+    df.columns = [str(c).strip().upper() for c in df.columns]            
+
+    return df
+
+# ======================
+# SAVE + LOAD (CHỈ LOAD 1 LẦN)
 # ======================
 if uploaded_file is not None:
+    # lưu file
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
+
+    # load vào memory (QUAN TRỌNG)
+    st.session_state.df = load_data(uploaded_file)
+
     st.success("✅ Đã upload dữ liệu")
 
 # ======================
-# LOAD DATA
+# LẤY DATA (KHÔNG LOAD LẠI)
 # ======================
-if os.path.exists(file_path):
-    with open(file_path, "rb") as f:
-        df = load_data(f)
-else:
-    st.info("📌 Chưa có dữ liệu. Vui lòng upload file.")
-    st.stop()
+if "df" not in st.session_state:
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            st.session_state.df = load_data(f)
+    else:
+        st.info("📌 Chưa có dữ liệu. Vui lòng upload file.")
+        st.stop()
+
+# 👉 dùng df từ memory
+df = st.session_state.df
 
 
     
