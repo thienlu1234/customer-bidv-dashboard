@@ -1133,7 +1133,8 @@ elif menu == "🏢  Phòng ban":
     st.markdown("### 👨‍💼 Cán bộ thuộc phòng")
 
     list_cb_pb = sorted(df_pb["HO VA TEN"].dropna().astype(str).unique())
-
+    so_cb = len(list_cb_pb)
+    
     st.markdown(
         f"""
         <div style="
@@ -1146,12 +1147,12 @@ elif menu == "🏢  Phòng ban":
             color: #0E6F66;
             margin-bottom: 16px;
         ">
-            {", ".join(list_cb_pb) if len(list_cb_pb) > 0 else "Không có cán bộ"}
+            <b>👨‍💼 Tổng cán bộ: {so_cb}</b><br><br>
+            {", ".join(list_cb_pb) if so_cb > 0 else "Không có cán bộ"}
         </div>
         """,
         unsafe_allow_html=True
     )
-
     # =========================
     # TABLE CHI TIẾT
     # =========================
