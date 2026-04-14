@@ -1063,7 +1063,7 @@ elif menu == "🏢  Phòng ban":
     )
 
     # =========================
-    # 🔥 CHI TIẾT THEO PHÒNG BAN (MỚI)
+    # CHI TIẾT THEO PHÒNG BAN
     # =========================
     st.markdown("---")
     st.markdown(
@@ -1072,7 +1072,7 @@ elif menu == "🏢  Phòng ban":
     )
 
     # chọn phòng ban
-    list_pb = group_pb["PHONG BAN"].unique()
+    list_pb = group_pb["PHONG BAN"].dropna().unique()
 
     selected_pb = st.selectbox(
         "Chọn phòng ban",
@@ -1109,32 +1109,49 @@ elif menu == "🏢  Phòng ban":
     # KPI ĐẸP BIDV
     # =========================
     st.markdown("### 📊 Tổng hợp phòng ban")
-    
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        kpi_card("👥 KH Active+New", f"{len(df_pb):,}")
+
+    with c2:
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
+
+    with c3:
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+
+    with c4:
+        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+
+    with c5:
+        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
+
     # =========================
     # DANH SÁCH CÁN BỘ CỦA PHÒNG
     # =========================
+    st.markdown("### 👨‍💼 Cán bộ trong phòng")
+
     list_cb_pb = sorted(df_pb["HO VA TEN"].dropna().astype(str).unique())
-    ten_can_bo_pb = ", ".join(list_cb_pb)
-    
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
-    
-    with c1:
-        kpi_card("👥 KH Active+New", f"{len(df_pb):,}")
-    
-    with c2:
-        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
-    
-    with c3:
-        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
-    
-    with c4:
-        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
-    
-    with c5:
-        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
-    
-    with c6:
-        kpi_card("👨‍💼 Cán bộ", ten_can_bo_pb)
+
+    st.markdown(
+        f"""
+        <div style="
+            background: linear-gradient(135deg, #ffffff, #f9fafb);
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+            font-size: 16px;
+            line-height: 1.8;
+            color: #0E6F66;
+            margin-bottom: 16px;
+        ">
+            {", ".join(list_cb_pb) if len(list_cb_pb) > 0 else "Không có cán bộ"}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
     # =========================
     # TABLE CHI TIẾT
     # =========================
