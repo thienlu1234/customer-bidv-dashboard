@@ -493,6 +493,16 @@ elif menu == "🎯  HDVKKH_BQ":
     tren_50 = (df_cs[col_hdv] > 50_000_000).sum()
 
     # =========================
+    # TÍNH TỔNG HDV
+    # =========================
+    tong_hdv = df_cs[col_hdv].sum()
+    
+    hdv_duoi_5 = df_cs[df_cs[col_hdv] <= 5_000_000][col_hdv].sum()
+    hdv_5_20 = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)][col_hdv].sum()
+    hdv_20_50 = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)][col_hdv].sum()
+    hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
+
+    # =========================
     # KPI CARD ĐẸP
     # =========================
     st.markdown("### 📊 Phân nhóm khách hàng")
@@ -507,6 +517,28 @@ elif menu == "🎯  HDVKKH_BQ":
         kpi_card("🏆 20 - 50TR", f"{tu_20_50:,}")
     with c4:
         kpi_card("🔥 > 50TR", f"{tren_50:,}")
+
+    # =========================
+    # KPI TỔNG HDV (MỚI)
+    # =========================
+    st.markdown("### 💰 Tổng HDVKKH_BQ")
+    
+    c1, c2, c3, c4, c5 = st.columns(5)
+    
+    with c1:
+        kpi_card("🏦 Tổng", f"{tong_hdv:,.0f}")
+    
+    with c2:
+        kpi_card("💚 <5TR", f"{hdv_duoi_5:,.0f}")
+    
+    with c3:
+        kpi_card("💰 5-20TR", f"{hdv_5_20:,.0f}")
+    
+    with c4:
+        kpi_card("🏆 20-50TR", f"{hdv_20_50:,.0f}")
+    
+    with c5:
+        kpi_card("🔥 >50TR", f"{hdv_tren_50:,.0f}")
 
     # =========================
     # SELECT BOX
