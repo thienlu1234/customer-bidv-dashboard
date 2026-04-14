@@ -1297,6 +1297,9 @@ elif menu == "💼  Nghề nghiệp":
         unsafe_allow_html=True
     )
 
+    # =========================
+    # DATA
+    # =========================
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
     # tìm cột nghề nghiệp
@@ -1310,11 +1313,86 @@ elif menu == "💼  Nghề nghiệp":
         st.error("❌ Không tìm thấy cột nghề nghiệp")
         st.stop()
 
+    # =========================
+    # BẢNG TỔNG
+    # =========================
     result = df_kh[col_job].value_counts().reset_index()
     result.columns = ["Nghề nghiệp", "Số KH"]
 
     result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
 
     st.dataframe(result, use_container_width=True, hide_index=True)
+
+    # =========================
+    # 🔥 CHI TIẾT THEO NGHỀ NGHIỆP
+    # =========================
+    st.markdown("---")
+    st.markdown(
+        '<div class="section-title">💼 Chi tiết theo nghề nghiệp</div>',
+        unsafe_allow_html=True
+    )
+
+    # chọn nghề
+    list_job = result["Nghề nghiệp"].dropna().unique()
+
+    selected_job = st.selectbox(
+        "Chọn nghề nghiệp",
+        list_job
+    )
+
+    # lọc dữ liệu
+    df_job = df_kh[df_kh[col_job] == selected_job].copy()
+
+    # =========================
+    # KPI
+    # =========================
+    col_hdv_bq = "HDVKKH_BQ"
+    col_hdv_ck = "HDVCKH_CK"
+    col_dnck = "DNCK"
+    col_spdv = "TOTAL_SPDV"
+
+    # convert số
+    df_job[col_hdv_bq] = pd.to_numeric(df_job[col_hdv_bq], errors="coerce")
+    df_job[col_hdv_ck] = pd.to_numeric(df_job[col_hdv_ck], errors="coerce")
+    df_job[col_dnck] = pd.to_numeric(df_job[col_dnck], errors="coerce")
+    df_job[col_spdv] = pd.to_numeric(df_job[col_spdv], errors="coerce")
+
+    # tính tổng
+    tong_hdv_bq = df_job[col_hdv_bq].fillna(0).sum()
+    tong_hdv_ck = df_job[col_hdv_ck].fillna(0).sum()
+    tong_dnck = df_job[col_dnck].fillna(0).sum()
+    tong_spdv = df_job[col_spdv].fillna(0).sum()
+
+    # =========================
+    # KPI ĐẸP BIDV
+    # =========================
+    st.markdown("### 📊 Tổng hợp theo nghề nghiệp")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        kpi_card("👥 KH Active+New", f"{len(df_job):,}")
+
+    with c2:
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
+
+    with c3:
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+
+    with c4:
+        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+
+    with c5:
+        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
+
+    # =========================
+    # TABLE CHI TIẾT
+    # =========================
+    st.dataframe(
+        format_dataframe(df_job, col_customer, col_manager),
+        use_container_width=True,
+        height=500,
+        hide_index=True
+    )
 else:
     st.info("👉 Upload file để bắt đầu")
