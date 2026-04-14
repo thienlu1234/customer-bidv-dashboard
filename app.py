@@ -236,62 +236,61 @@ def load_data(file):
 
 
 # ======================
-# LOAD / SHARE DATA (FAST VERSION)
+# LOAD / SHARE DATA (UPLOAD CÓ PASSWORD)
 # ======================
 file_path = "saved_data.xlsx"
 
 st.markdown("---")
 
-col1, col2 = st.columns([3,1])
+# =========================
+# STATE
+# =========================
+if "pending_file" not in st.session_state:
+    st.session_state.pending_file = None
 
-with col1:
-    uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
+# =========================
+# UPLOAD UI
+# =========================
+uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
 
-with col2:
-    st.markdown("<br>", unsafe_allow_html=True)
+# =========================
+# KHI CHỌN FILE → LƯU TẠM
+# =========================
+if uploaded_file is not None:
+    st.session_state.pending_file = uploaded_file
 
-    # trạng thái login
-    if "show_login" not in st.session_state:
-        st.session_state.show_login = False
+# =========================
+# FORM NHẬP PASSWORD
+# =========================
+if st.session_state.pending_file is not None:
 
-    # nút tắt dữ liệu
-    if "df" in st.session_state:
-        if st.button("🗑️ Tắt dữ liệu"):
-            st.session_state.show_login = True
+    st.warning("🔐 Nhập mật khẩu để upload file")
 
-    # =========================
-    # LOGIN ADMIN
-    # =========================
-    if st.session_state.show_login:
+    password = st.text_input("Mật khẩu", type="password")
 
-        st.warning("🔐 Vui lòng đăng nhập admin để xóa dữ liệu")
+    col1, col2 = st.columns(2)
 
-        password = st.text_input("Nhập mật khẩu", type="password")
+    with col1:
+        if st.button("✅ Xác nhận upload"):
+            if password == "admin":
 
-        col_login1, col_login2 = st.columns(2)
+                # lưu file
+                with open(file_path, "wb") as f:
+                    f.write(st.session_state.pending_file.getbuffer())
 
-        with col_login1:
-            if st.button("✅ Xác nhận"):
-                if password == "admin":
+                st.success("✅ Upload thành công")
 
-                    # xóa file
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
+                # reset
+                st.session_state.pending_file = None
 
-                    # xóa data session
-                    st.session_state.pop("df", None)
+                st.rerun()
 
-                    st.success("✅ Đã tắt dữ liệu")
-                    st.session_state.show_login = False
-                    st.rerun()
+            else:
+                st.error("❌ Sai mật khẩu")
 
-                else:
-                    st.error("❌ Sai mật khẩu")
-
-        with col_login2:
-            if st.button("❌ Hủy"):
-                st.session_state.show_login = False
-
+    with col2:
+        if st.button("❌ Hủy"):
+            st.session_state.pending_file = None
 
 # ======================
 # SAVE + LOAD (PRO MAX)
