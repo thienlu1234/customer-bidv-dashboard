@@ -1170,6 +1170,9 @@ elif menu == "👶  Độ tuổi":
         unsafe_allow_html=True
     )
 
+    # =========================
+    # DATA
+    # =========================
     # chỉ lấy Active + New
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
@@ -1186,7 +1189,9 @@ elif menu == "👶  Độ tuổi":
 
     df_kh[col_age] = pd.to_numeric(df_kh[col_age], errors="coerce")
 
-    # phân nhóm tuổi
+    # =========================
+    # PHÂN NHÓM TUỔI
+    # =========================
     def age_group(x):
         if pd.isna(x):
             return "Không rõ"
@@ -1203,12 +1208,87 @@ elif menu == "👶  Độ tuổi":
 
     df_kh["AGE_GROUP"] = df_kh[col_age].apply(age_group)
 
+    # =========================
+    # BẢNG TỔNG
+    # =========================
     result = df_kh["AGE_GROUP"].value_counts().reset_index()
     result.columns = ["Nhóm tuổi", "Số KH"]
 
     result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
 
     st.dataframe(result, use_container_width=True, hide_index=True)
+
+    # =========================
+    # 🔥 CHI TIẾT THEO ĐỘ TUỔI
+    # =========================
+    st.markdown("---")
+    st.markdown(
+        '<div class="section-title">👶 Chi tiết theo độ tuổi</div>',
+        unsafe_allow_html=True
+    )
+
+    # chọn nhóm tuổi
+    list_age = result["Nhóm tuổi"].unique()
+
+    selected_age = st.selectbox(
+        "Chọn nhóm tuổi",
+        list_age
+    )
+
+    # lọc dữ liệu
+    df_age_detail = df_kh[df_kh["AGE_GROUP"] == selected_age].copy()
+
+    # =========================
+    # KPI
+    # =========================
+    col_hdv_bq = "HDVKKH_BQ"
+    col_hdv_ck = "HDVCKH_CK"
+    col_dnck = "DNCK"
+    col_spdv = "TOTAL_SPDV"
+
+    # convert số
+    df_age_detail[col_hdv_bq] = pd.to_numeric(df_age_detail[col_hdv_bq], errors="coerce")
+    df_age_detail[col_hdv_ck] = pd.to_numeric(df_age_detail[col_hdv_ck], errors="coerce")
+    df_age_detail[col_dnck] = pd.to_numeric(df_age_detail[col_dnck], errors="coerce")
+    df_age_detail[col_spdv] = pd.to_numeric(df_age_detail[col_spdv], errors="coerce")
+
+    # tính tổng
+    tong_hdv_bq = df_age_detail[col_hdv_bq].fillna(0).sum()
+    tong_hdv_ck = df_age_detail[col_hdv_ck].fillna(0).sum()
+    tong_dnck = df_age_detail[col_dnck].fillna(0).sum()
+    tong_spdv = df_age_detail[col_spdv].fillna(0).sum()
+
+    # =========================
+    # KPI ĐẸP
+    # =========================
+    st.markdown("### 📊 Tổng hợp theo độ tuổi")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        kpi_card("👥 KH Active+New", f"{len(df_age_detail):,}")
+
+    with c2:
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
+
+    with c3:
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+
+    with c4:
+        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+
+    with c5:
+        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
+
+    # =========================
+    # TABLE CHI TIẾT
+    # =========================
+    st.dataframe(
+        format_dataframe(df_age_detail, col_customer, col_manager),
+        use_container_width=True,
+        height=500,
+        hide_index=True
+    )
 
 elif menu == "💼  Nghề nghiệp":
 
