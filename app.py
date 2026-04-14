@@ -523,42 +523,26 @@ elif menu == "🎯  HDVKKH_BQ":
     hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
 
     # =========================
-    # KPI CARD ĐẸP
+    # KPI CARD GỘP (MỚI)
     # =========================
     st.markdown("### 📊 Phân nhóm khách hàng")
 
-    c1, c2, c3, c4 = st.columns(4)
-
-    with c1:
-        kpi_card("💚 < 5TR", f"{duoi_5:,}")
-    with c2:
-        kpi_card("💰 5 - 20TR", f"{tu_5_20:,}")
-    with c3:
-        kpi_card("🏆 20 - 50TR", f"{tu_20_50:,}")
-    with c4:
-        kpi_card("🔥 > 50TR", f"{tren_50:,}")
-
-    # =========================
-    # KPI TỔNG HDV (MỚI)
-    # =========================
-    st.markdown("### 💰 Tổng HDVKKH_BQ")
-    
     c1, c2, c3, c4, c5 = st.columns(5)
-    
+
     with c1:
-        kpi_card("🏦 Tổng", f"{tong_hdv:,.0f}")
-    
+        kpi_card("🏦 Tổng", f"{len(df_cs):,}<br><span style='font-size:14px;color:gray'>{tong_hdv:,.0f}</span>")
+
     with c2:
-        kpi_card("💚 <5TR", f"{hdv_duoi_5:,.0f}")
-    
+        kpi_card("💚 <5TR", f"{duoi_5:,}<br><span style='font-size:14px;color:gray'>{hdv_duoi_5:,.0f}</span>")
+
     with c3:
-        kpi_card("💰 5-20TR", f"{hdv_5_20:,.0f}")
-    
+        kpi_card("💰 5-20TR", f"{tu_5_20:,}<br><span style='font-size:14px;color:gray'>{hdv_5_20:,.0f}</span>")
+
     with c4:
-        kpi_card("🏆 20-50TR", f"{hdv_20_50:,.0f}")
-    
+        kpi_card("🏆 20-50TR", f"{tu_20_50:,}<br><span style='font-size:14px;color:gray'>{hdv_20_50:,.0f}</span>")
+
     with c5:
-        kpi_card("🔥 >50TR", f"{hdv_tren_50:,.0f}")
+        kpi_card("🔥 >50TR", f"{tren_50:,}<br><span style='font-size:14px;color:gray'>{hdv_tren_50:,.0f}</span>")
 
     # =========================
     # SELECT BOX
@@ -593,7 +577,7 @@ elif menu == "🎯  HDVKKH_BQ":
         st.success(f"👉 Nhóm **{option}** có **{len(df_show):,} khách hàng**")
 
     # =========================
-    # BIỂU ĐỒ MINI (ĐẸP)
+    # BIỂU ĐỒ MINI (GIỮ NGUYÊN)
     # =========================
     import plotly.express as px
 
