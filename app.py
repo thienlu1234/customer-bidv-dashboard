@@ -532,7 +532,7 @@ elif menu == "🎯  HDVKKH_BQ":
     with c1:
     kpi_card("🏦 Tổng",
         f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
-    )
+        )
 
     with c2:
         kpi_card("💚 <5TR",
