@@ -1109,24 +1109,32 @@ elif menu == "🏢  Phòng ban":
     # KPI ĐẸP BIDV
     # =========================
     st.markdown("### 📊 Tổng hợp phòng ban")
-
-    c1, c2, c3, c4, c5 = st.columns(5)
-
+    
+    # =========================
+    # DANH SÁCH CÁN BỘ CỦA PHÒNG
+    # =========================
+    list_cb_pb = sorted(df_pb["HO VA TEN"].dropna().astype(str).unique())
+    ten_can_bo_pb = ", ".join(list_cb_pb)
+    
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    
     with c1:
         kpi_card("👥 KH Active+New", f"{len(df_pb):,}")
-
+    
     with c2:
         kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
-
+    
     with c3:
         kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
-
+    
     with c4:
         kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
-
+    
     with c5:
         kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
-
+    
+    with c6:
+        kpi_card("👨‍💼 Cán bộ", ten_can_bo_pb)
     # =========================
     # TABLE CHI TIẾT
     # =========================
