@@ -235,62 +235,50 @@ def load_data(file):
     return df
 
 
+# =========================
+# LOAD DATA FUNCTION (PHẢI ĐẶT LÊN TRÊN)
+# =========================
+@st.cache_data
+def load_data(file):
+
+    try:
+        df = pd.read_excel(file).copy()
+    except:
+        try:
+            df = pd.read_excel(file, engine="pyxlsb").copy()
+        except:
+            try:
+                df = pd.read_csv(file).copy()
+            except:
+                return None
+    df.columns = [str(c).strip().upper() for c in df.columns]
+    return df
+
+
 # ======================
-# LOAD / SHARE DATA (UPLOAD CÓ PASSWORD)
+# LOAD / SHARE DATA (FAST VERSION)
 # ======================
 file_path = "saved_data.xlsx"
 
 st.markdown("---")
 
-# =========================
-# STATE
-# =========================
-if "pending_file" not in st.session_state:
-    st.session_state.pending_file = None
+col1, col2 = st.columns([3,1])
 
-# =========================
-# UPLOAD UI
-# =========================
-uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
+with col1:
+    uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
 
-# =========================
-# KHI CHỌN FILE → LƯU TẠM
-# =========================
-if uploaded_file is not None:
-    st.session_state.pending_file = uploaded_file
+with col2:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if "df" in st.session_state:
+        if st.button("🗑️ Tắt dữ liệu"):
+            if os.path.exists(file_path):
+                os.remove(file_path)
 
-# =========================
-# FORM NHẬP PASSWORD
-# =========================
-if st.session_state.pending_file is not None:
+            st.session_state.pop("df", None)
+            st.warning("⚠️ Đã tắt dữ liệu")
+            st.rerun()
 
-    st.warning("🔐 Nhập mật khẩu để upload file")
 
-    password = st.text_input("Mật khẩu", type="password")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("✅ Xác nhận upload"):
-            if password == "admin":
-
-                # lưu file
-                with open(file_path, "wb") as f:
-                    f.write(st.session_state.pending_file.getbuffer())
-
-                st.success("✅ Upload thành công")
-
-                # reset
-                st.session_state.pending_file = None
-
-                st.rerun()
-
-            else:
-                st.error("❌ Sai mật khẩu")
-
-    with col2:
-        if st.button("❌ Hủy"):
-            st.session_state.pending_file = None
 
 # ======================
 # SAVE + LOAD (PRO MAX)
@@ -342,7 +330,6 @@ if "df_processed" not in st.session_state:
     st.session_state.df_processed = df_temp
 
 df = st.session_state.df_processed
-
     
 
 
