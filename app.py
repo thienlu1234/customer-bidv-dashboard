@@ -523,27 +523,54 @@ elif menu == "🎯  HDVKKH_BQ":
     hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
 
     # =========================
-    # KPI CARD GỘP (MỚI)
+    # KPI CARD GỘP (MỚI - ĐẸP)
     # =========================
     st.markdown("### 📊 Phân nhóm khách hàng")
-
+    
+    # 👉 custom card đẹp hơn
+    def kpi_card_2(title, so_kh, so_tien):
+        st.markdown(f"""
+        <div style="
+            background:white;
+            padding:16px;
+            border-radius:14px;
+            text-align:center;
+            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+        ">
+            <div style="font-size:14px; color:#888;">{title}</div>
+    
+            <div style="margin-top:6px; font-size:16px;">
+                <b>Tổng KH:</b> {so_kh}
+            </div>
+    
+            <div style="
+                margin-top:6px;
+                font-size:22px;
+                font-weight:bold;
+                color:#E6A700;
+            ">
+                {so_tien}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    
     c1, c2, c3, c4, c5 = st.columns(5)
-
+    
     with c1:
-        kpi_card("🏦 Tổng", f"{len(df_cs):,}<br><span style='font-size:14px;color:gray'>{tong_hdv:,.0f}</span>")
-
+        kpi_card_2("🏦 Tổng", f"{len(df_cs):,}", f"{tong_hdv:,.0f}")
+    
     with c2:
-        kpi_card("💚 <5TR", f"{duoi_5:,}<br><span style='font-size:14px;color:gray'>{hdv_duoi_5:,.0f}</span>")
-
+        kpi_card_2("💚 <5TR", f"{duoi_5:,}", f"{hdv_duoi_5:,.0f}")
+    
     with c3:
-        kpi_card("💰 5-20TR", f"{tu_5_20:,}<br><span style='font-size:14px;color:gray'>{hdv_5_20:,.0f}</span>")
-
+        kpi_card_2("💰 5-20TR", f"{tu_5_20:,}", f"{hdv_5_20:,.0f}")
+    
     with c4:
-        kpi_card("🏆 20-50TR", f"{tu_20_50:,}<br><span style='font-size:14px;color:gray'>{hdv_20_50:,.0f}</span>")
-
+        kpi_card_2("🏆 20-50TR", f"{tu_20_50:,}", f"{hdv_20_50:,.0f}")
+    
     with c5:
-        kpi_card("🔥 >50TR", f"{tren_50:,}<br><span style='font-size:14px;color:gray'>{hdv_tren_50:,.0f}</span>")
-
+        kpi_card_2("🔥 >50TR", f"{tren_50:,}", f"{hdv_tren_50:,.0f}")
     # =========================
     # SELECT BOX
     # =========================
