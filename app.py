@@ -742,9 +742,14 @@ elif menu == "📈  Trung bình DV/người":
 
     c1, c2, c3 = st.columns(3)
 
-    c1.metric("💳 Tổng DV", f"{int(total_spdv):,}")
-    c2.metric("👥 Số KH", f"{total_kh:,}")
-    c3.metric("📊 TB DV / KH", f"{avg_spdv:.2f}")
+    with c1:
+        kpi_card("💳 Tổng DV", f"{int(total_spdv):,}")
+    
+    with c2:
+        kpi_card("👥 Số KH", f"{total_kh:,}")
+    
+    with c3:
+        kpi_card("📊 TB DV / KH", f"{avg_spdv:.2f}")
 
     # =========================
     # 🔥 PHÂN BỐ SỐ DỊCH VỤ
