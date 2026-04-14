@@ -249,15 +249,48 @@ with col1:
 
 with col2:
     st.markdown("<br>", unsafe_allow_html=True)
+
+    # trạng thái login
+    if "show_login" not in st.session_state:
+        st.session_state.show_login = False
+
+    # nút tắt dữ liệu
     if "df" in st.session_state:
         if st.button("🗑️ Tắt dữ liệu"):
-            if os.path.exists(file_path):
-                os.remove(file_path)
+            st.session_state.show_login = True
 
-            st.session_state.pop("df", None)
-            st.warning("⚠️ Đã tắt dữ liệu")
-            st.rerun()
+    # =========================
+    # LOGIN ADMIN
+    # =========================
+    if st.session_state.show_login:
 
+        st.warning("🔐 Vui lòng đăng nhập admin để xóa dữ liệu")
+
+        password = st.text_input("Nhập mật khẩu", type="password")
+
+        col_login1, col_login2 = st.columns(2)
+
+        with col_login1:
+            if st.button("✅ Xác nhận"):
+                if password == "admin":
+
+                    # xóa file
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+
+                    # xóa data session
+                    st.session_state.pop("df", None)
+
+                    st.success("✅ Đã tắt dữ liệu")
+                    st.session_state.show_login = False
+                    st.rerun()
+
+                else:
+                    st.error("❌ Sai mật khẩu")
+
+        with col_login2:
+            if st.button("❌ Hủy"):
+                st.session_state.show_login = False
 
 
 # ======================
