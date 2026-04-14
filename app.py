@@ -526,8 +526,7 @@ elif menu == "🎯  HDVKKH_BQ":
     # KPI CARD GỘP (MỚI - ĐẸP)
     # =========================
     st.markdown("### 📊 Phân nhóm khách hàng")
-    
-    # 👉 custom card đẹp hơn
+
     def kpi_card_2(title, so_kh, so_tien):
         st.markdown(f"""
         <div style="
