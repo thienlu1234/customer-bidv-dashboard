@@ -523,12 +523,12 @@ elif menu == "🎯  HDVKKH_BQ":
     hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
 
     # =========================
-    # KPI CARD GỘP (MỚI - ĐẸP)
+    # KPI CARD GỘP (FIX FULL)
     # =========================
     st.markdown("### 📊 Phân nhóm khách hàng")
-
+    
     def kpi_card_2(title, so_kh, so_tien):
-        st.markdown(f"""
+        return f"""
         <div style="
             background:white;
             padding:16px;
@@ -551,25 +551,30 @@ elif menu == "🎯  HDVKKH_BQ":
                 {so_tien}
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
     
     
     c1, c2, c3, c4, c5 = st.columns(5)
     
     with c1:
-        kpi_card_2("🏦 Tổng", f"{len(df_cs):,}", f"{tong_hdv:,.0f}")
+        with st.container():
+            st.markdown(kpi_card_2("🏦 Tổng", f"{len(df_cs):,}", f"{tong_hdv:,.0f}"), unsafe_allow_html=True)
     
     with c2:
-        kpi_card_2("💚 <5TR", f"{duoi_5:,}", f"{hdv_duoi_5:,.0f}")
+        with st.container():
+            st.markdown(kpi_card_2("💚 <5TR", f"{duoi_5:,}", f"{hdv_duoi_5:,.0f}"), unsafe_allow_html=True)
     
     with c3:
-        kpi_card_2("💰 5-20TR", f"{tu_5_20:,}", f"{hdv_5_20:,.0f}")
+        with st.container():
+            st.markdown(kpi_card_2("💰 5-20TR", f"{tu_5_20:,}", f"{hdv_5_20:,.0f}"), unsafe_allow_html=True)
     
     with c4:
-        kpi_card_2("🏆 20-50TR", f"{tu_20_50:,}", f"{hdv_20_50:,.0f}")
+        with st.container():
+            st.markdown(kpi_card_2("🏆 20-50TR", f"{tu_20_50:,}", f"{hdv_20_50:,.0f}"), unsafe_allow_html=True)
     
     with c5:
-        kpi_card_2("🔥 >50TR", f"{tren_50:,}", f"{hdv_tren_50:,.0f}")
+        with st.container():
+            st.markdown(kpi_card_2("🔥 >50TR", f"{tren_50:,}", f"{hdv_tren_50:,.0f}"), unsafe_allow_html=True)
     # =========================
     # SELECT BOX
     # =========================
