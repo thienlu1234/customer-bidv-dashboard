@@ -409,8 +409,9 @@ if menu == "📊  Tổng quan":
     
     st.markdown("### 📊 Tỷ lệ khách hàng")
     
-    labels = ["Active", "New", "Frozen", "Dormant"]
-    values = [active, new, frozen, dormant]
+    # 🔥 KHÔNG còn New
+    labels = ["Active", "Frozen", "Dormant"]
+    values = [active, frozen, dormant]
     
     # CHIA LAYOUT CHO ĐẸP (center)
     col_left, col_center, col_right = st.columns([1, 2, 1])
@@ -420,22 +421,21 @@ if menu == "📊  Tổng quan":
             labels=labels,
             values=values,
     
-            hole=0.55,  # donut sâu hơn → sang hơn
+            hole=0.55,
     
-            # chỉ highlight Active thôi (đỡ rối)
-            pull=[0.06, 0, 0, 0],
+            # 🔥 chỉ highlight Active
+            pull=[0.06, 0, 0],
     
             marker=dict(
                 colors=[
                     "#0E6F66",  # xanh BIDV (Active)
-                    "#F5C32C",  # vàng (New)
                     "#5DADE2",  # xanh nhạt (Frozen)
                     "#EC7063"   # đỏ (Dormant)
                 ],
                 line=dict(color="white", width=3)
             ),
     
-            textinfo="percent",  # chỉ hiện % cho gọn
+            textinfo="percent",
             textfont=dict(size=18, color="white"),
     
             hovertemplate="<b>%{label}</b><br>Số KH: %{value:,}<br>Tỷ lệ: %{percent}<extra></extra>"
