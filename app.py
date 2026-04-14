@@ -381,8 +381,8 @@ if menu == "📊  Tổng quan":
     )
 
     total = len(df)
-    active = (df[col_status] == "Active").sum()
-    new = (df[col_status] == "New").sum()
+    active = df[col_status].isin(["Active", "New"]).sum()
+    
     frozen = (df[col_status] == "Frozen").sum()
     dormant = (df[col_status] == "Dormant").sum()
     nan_count = df[col_status].isna().sum()
@@ -390,19 +390,17 @@ if menu == "📊  Tổng quan":
     # ======================
     # KPI
     # ======================
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
         kpi_card("👥 Tổng KH", f"{total:,}")
     with c2:
         kpi_card("🔥 Active", f"{active:,}")
     with c3:
-        kpi_card("🆕 New", f"{new:,}")
-    with c4:
         kpi_card("❄️ Frozen", f"{frozen:,}")
-    with c5:
+    with c4:
         kpi_card("😴 Dormant", f"{dormant:,}")
-    with c6:
+    with c5:
         kpi_card("❓ NaN", f"{nan_count:,}")
 
     # ======================
