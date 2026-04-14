@@ -267,16 +267,17 @@ col1, col2 = st.columns([3,1])
 with col1:
     uploaded_file = st.file_uploader("📂 Upload file dữ liệu")
 
+    # ======================
+    # SAVE FILE
+    # ======================
+    if uploaded_file is not None:
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        st.success("✅ Đã upload dữ liệu")
+
 with col2:
     st.markdown("<br>", unsafe_allow_html=True)
-    if "df" in st.session_state:
-        if st.button("🗑️ Tắt dữ liệu"):
-            if os.path.exists(file_path):
-                os.remove(file_path)
-
-            st.session_state.pop("df", None)
-            st.warning("⚠️ Đã tắt dữ liệu")
-            st.rerun()
 
 
 
