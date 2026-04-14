@@ -637,8 +637,18 @@ elif menu == "💰  HDVCKH_CK":
     # sort tiền lớn lên trên
     df_ck = df_ck.sort_values(by=col_ck, ascending=False)
 
-    # KPI
-    st.metric("Số khách cần chăm", f"{len(df_ck):,}")
+    # =========================
+    # KPI ĐẸP (BIDV)
+    # =========================
+    tong_hdv_ck = df_ck[col_ck].sum()
+    
+    c1, c2 = st.columns(2)
+    
+    with c1:
+        kpi_card("👥 Số khách cần chăm", f"{len(df_ck):,}")
+    
+    with c2:
+        kpi_card("💰 Tổng HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
 
     # hiển thị
     st.dataframe(
