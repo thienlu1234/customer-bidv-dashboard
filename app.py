@@ -410,8 +410,8 @@ if menu == "📊  Tổng quan":
     st.markdown("### 📊 Tỷ lệ khách hàng")
     
     # 🔥 KHÔNG còn New
-    labels = ["Active", "Frozen", "Dormant", "NaN"]
-    values = [active, frozen, dormant, nan_count]
+    labels = ["Active", "Frozen", "Dormant"]
+    values = [active, frozen, dormant]
     
     # CHIA LAYOUT CHO ĐẸP (center)
     col_left, col_center, col_right = st.columns([1, 2, 1])
@@ -424,14 +424,14 @@ if menu == "📊  Tổng quan":
             hole=0.55,
     
             # 🔥 chỉ highlight Active
-            pull=[0.06, 0, 0, 0],
+            pull=[0.06, 0, 0],
     
             marker=dict(
                 colors=[
                     "#0E6F66",  # xanh BIDV (Active)
                     "#5DADE2",  # xanh nhạt (Frozen)
                     "#EC7063"   # đỏ (Dormant)
-                    "#BDC3C7"   # NaN (xám nhạt)
+                    
                 ],
                 line=dict(color="white", width=3)
             ),
