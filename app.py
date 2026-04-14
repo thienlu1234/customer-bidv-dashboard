@@ -1130,7 +1130,7 @@ elif menu == "🏢  Phòng ban":
     # =========================
     # DANH SÁCH CÁN BỘ CỦA PHÒNG
     # =========================
-    st.markdown("### 👨‍💼 Cán bộ trong phòng")
+    st.markdown("### 👨‍💼 Cán bộ thuộc phòng")
 
     list_cb_pb = sorted(df_pb["HO VA TEN"].dropna().astype(str).unique())
 
