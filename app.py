@@ -530,8 +530,8 @@ elif menu == "🎯  HDVKKH_BQ":
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-    kpi_card("🏦 Tổng",
-        f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
+        kpi_card("🏦 Tổng",
+            f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
         )
 
     with c2:
