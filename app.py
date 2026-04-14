@@ -530,19 +530,29 @@ elif menu == "🎯  HDVKKH_BQ":
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-        kpi_card("🏦 Tổng", f"{len(df_cs):,}<br><span style='font-size:14px;color:gray'>{tong_hdv:,.0f}</span>")
+    kpi_card("🏦 Tổng",
+        f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
+    )
 
     with c2:
-        kpi_card("💚 <5TR", f"{duoi_5:,}<br><span style='font-size:14px;color:gray'>{hdv_duoi_5:,.0f}</span>")
-
+        kpi_card("💚 <5TR",
+            f"{duoi_5:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_duoi_5:,.0f}</span>"
+        )
+    
     with c3:
-        kpi_card("💰 5-20TR", f"{tu_5_20:,}<br><span style='font-size:14px;color:gray'>{hdv_5_20:,.0f}</span>")
-
+        kpi_card("💰 5-20TR",
+            f"{tu_5_20:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_5_20:,.0f}</span>"
+        )
+    
     with c4:
-        kpi_card("🏆 20-50TR", f"{tu_20_50:,}<br><span style='font-size:14px;color:gray'>{hdv_20_50:,.0f}</span>")
-
+        kpi_card("🏆 20-50TR",
+            f"{tu_20_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_20_50:,.0f}</span>"
+        )
+    
     with c5:
-        kpi_card("🔥 >50TR", f"{tren_50:,}<br><span style='font-size:14px;color:gray'>{hdv_tren_50:,.0f}</span>")
+        kpi_card("🔥 >50TR",
+            f"{tren_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_tren_50:,.0f}</span>"
+        )
 
     # =========================
     # SELECT BOX
