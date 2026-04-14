@@ -1047,7 +1047,7 @@ elif menu == "🏢  Phòng ban":
     group_pb = group_pb.sort_values(by="tong_kh_all", ascending=False)
 
     # =========================
-    # HIỂN THỊ
+    # HIỂN THỊ BẢNG TỔNG
     # =========================
     st.dataframe(
         group_pb[[
@@ -1060,7 +1060,83 @@ elif menu == "🏢  Phòng ban":
         ]],
         use_container_width=True,
         hide_index=True
-    ) 
+    )
+
+    # =========================
+    # 🔥 CHI TIẾT THEO PHÒNG BAN (MỚI)
+    # =========================
+    st.markdown("---")
+    st.markdown(
+        '<div class="section-title">🏢 Chi tiết theo phòng ban</div>',
+        unsafe_allow_html=True
+    )
+
+    # chọn phòng ban
+    list_pb = group_pb["PHONG BAN"].unique()
+
+    selected_pb = st.selectbox(
+        "Chọn phòng ban",
+        list_pb
+    )
+
+    # lọc dữ liệu
+    df_pb = df[
+        (df["PHONG BAN"] == selected_pb) &
+        (df[col_status].isin(["Active", "New"]))
+    ].copy()
+
+    # =========================
+    # KPI THEO PHÒNG BAN
+    # =========================
+    col_hdv_bq = "HDVKKH_BQ"
+    col_hdv_ck = "HDVCKH_CK"
+    col_dnck = "DNCK"
+    col_spdv = "TOTAL_SPDV"
+
+    # convert số
+    df_pb[col_hdv_bq] = pd.to_numeric(df_pb[col_hdv_bq], errors="coerce")
+    df_pb[col_hdv_ck] = pd.to_numeric(df_pb[col_hdv_ck], errors="coerce")
+    df_pb[col_dnck] = pd.to_numeric(df_pb[col_dnck], errors="coerce")
+    df_pb[col_spdv] = pd.to_numeric(df_pb[col_spdv], errors="coerce")
+
+    # tính tổng
+    tong_hdv_bq = df_pb[col_hdv_bq].fillna(0).sum()
+    tong_hdv_ck = df_pb[col_hdv_ck].fillna(0).sum()
+    tong_dnck = df_pb[col_dnck].fillna(0).sum()
+    tong_spdv = df_pb[col_spdv].fillna(0).sum()
+
+    # =========================
+    # KPI ĐẸP BIDV
+    # =========================
+    st.markdown("### 📊 Tổng hợp phòng ban")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        kpi_card("👥 KH Active+New", f"{len(df_pb):,}")
+
+    with c2:
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
+
+    with c3:
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+
+    with c4:
+        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+
+    with c5:
+        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
+
+    # =========================
+    # TABLE CHI TIẾT
+    # =========================
+    st.dataframe(
+        format_dataframe(df_pb, col_customer, col_manager),
+        use_container_width=True,
+        height=500,
+        hide_index=True
+    )
+    
 elif menu == "👶  Độ tuổi":
 
     st.markdown(
