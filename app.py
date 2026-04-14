@@ -670,46 +670,46 @@ elif menu == "💰  HDVCKH_CK":
     
         col_dnck = "DNCK"
     
-        # kiểm tra cột
-        if col_dnck not in df.columns:
-            st.error("❌ Không tìm thấy cột DNCK")
-            st.write("Các cột hiện có:", df.columns)
-            st.stop()
-    
-        # 🔥 1. Active + New
-        df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
-    
-        # 🔥 2. CONVERT SỐ (QUAN TRỌNG - PHẢI ĐẶT TRƯỚC)
-        df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
-    
-        # 🔥 3. GIỮ KHÁCH CÓ DNCK
-        df_dnck = df_dnck[df_dnck[col_dnck] > 0]
-    
-        # 🔥 4. SORT
-        df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
-    
-        # =========================
-        # KPI ĐẸP (BIDV)
-        # =========================
-        tong_dnck = df_dnck[col_dnck].fillna(0).sum()
-    
-        c1, c2 = st.columns(2)
-    
-        with c1:
-            kpi_card("🏦 Số khách DNCK", f"{len(df_dnck):,}")
-    
-        with c2:
-            kpi_card("💰 Tổng DNCK (VND)", f"{tong_dnck:,.0f}")
-    
-        # =========================
-        # DATA TABLE
-        # =========================
-        st.dataframe(
-            format_dataframe(df_dnck, col_customer, col_manager),
-            use_container_width=True,
-            height=600,
-            hide_index=True
-        )
+    # kiểm tra cột
+    if col_dnck not in df.columns:
+        st.error("❌ Không tìm thấy cột DNCK")
+        st.write("Các cột hiện có:", df.columns)
+        st.stop()
+
+    # 🔥 1. Active + New
+    df_dnck = df[df[col_status].isin(["Active", "New"])].copy()
+
+    # 🔥 2. CONVERT SỐ (QUAN TRỌNG - PHẢI ĐẶT TRƯỚC)
+    df_dnck[col_dnck] = pd.to_numeric(df_dnck[col_dnck], errors="coerce")
+
+    # 🔥 3. GIỮ KHÁCH CÓ DNCK
+    df_dnck = df_dnck[df_dnck[col_dnck] > 0]
+
+    # 🔥 4. SORT
+    df_dnck = df_dnck.sort_values(by=col_dnck, ascending=False)
+
+    # =========================
+    # KPI ĐẸP (BIDV)
+    # =========================
+    tong_dnck = df_dnck[col_dnck].fillna(0).sum()
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        kpi_card("🏦 Số khách DNCK", f"{len(df_dnck):,}")
+
+    with c2:
+        kpi_card("💰 Tổng DNCK (VND)", f"{tong_dnck:,.0f}")
+
+    # =========================
+    # DATA TABLE
+    # =========================
+    st.dataframe(
+        format_dataframe(df_dnck, col_customer, col_manager),
+        use_container_width=True,
+        height=600,
+        hide_index=True
+    )
 
 # =========================
 # 5. TRUNG BÌNH DV / NGƯỜI
