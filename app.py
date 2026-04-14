@@ -925,10 +925,51 @@ elif menu == "👨‍💼  Cán bộ":
         (df[col_status].isin(["Active", "New"]))
     ].copy()
 
-    # KPI nhỏ
-    st.metric("Số khách Active + New", f"{len(df_detail):,}")
+    # =========================
+    # 🔥 THÊM KPI THEO CÁN BỘ (MỚI)
+    # =========================
+    col_hdv_bq = "HDVKKH_BQ"
+    col_hdv_ck = "HDVCKH_CK"
+    col_dnck = "DNCK"
+    col_spdv = "TOTAL_SPDV"
 
-    # hiển thị bảng chi tiết
+    # convert số
+    df_detail[col_hdv_bq] = pd.to_numeric(df_detail[col_hdv_bq], errors="coerce")
+    df_detail[col_hdv_ck] = pd.to_numeric(df_detail[col_hdv_ck], errors="coerce")
+    df_detail[col_dnck] = pd.to_numeric(df_detail[col_dnck], errors="coerce")
+    df_detail[col_spdv] = pd.to_numeric(df_detail[col_spdv], errors="coerce")
+
+    # tính tổng
+    tong_hdv_bq = df_detail[col_hdv_bq].fillna(0).sum()
+    tong_hdv_ck = df_detail[col_hdv_ck].fillna(0).sum()
+    tong_dnck = df_detail[col_dnck].fillna(0).sum()
+    tong_spdv = df_detail[col_spdv].fillna(0).sum()
+
+    # =========================
+    # KPI ĐẸP BIDV
+    # =========================
+    st.markdown("### 📊 Tổng hợp theo cán bộ")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+
+    with c1:
+        kpi_card("👥 KH Active+New", f"{len(df_detail):,}")
+
+    with c2:
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
+
+    with c3:
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+
+    with c4:
+        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+
+    with c5:
+        kpi_card("📊 Tổng DV", f"{tong_spdv:,.0f}")
+
+    # =========================
+    # TABLE
+    # =========================
     st.dataframe(
         format_dataframe(df_detail, col_customer, col_manager),
         use_container_width=True,
