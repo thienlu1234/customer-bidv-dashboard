@@ -436,7 +436,7 @@ if menu == "📊  Tổng quan":
     col_hdv_bq = "HDVKKH_BQ"
     col_hdv_ck = "HDVCKH_CK"
     col_dnck = "DNCK"
-    col_spdv = "TOTAL_SPDV"
+    
 
     # convert số an toàn
     for col in [col_hdv_bq, col_hdv_ck, col_dnck, col_spdv]:
@@ -447,16 +447,15 @@ if menu == "📊  Tổng quan":
     tong_hdv_bq = df[col_hdv_bq].fillna(0).sum() if col_hdv_bq in df else 0
     tong_hdv_ck = df[col_hdv_ck].fillna(0).sum() if col_hdv_ck in df else 0
     tong_dnck = df[col_dnck].fillna(0).sum() if col_dnck in df else 0
-    tong_spdv = df[col_spdv].fillna(0).sum() if col_spdv in df else 0
+    
 
-    # trung bình DV/người
-    dv_tb = tong_spdv / total if total != 0 else 0
+    
 
     # số phòng ban
     so_phong_ban = df["PHONG BAN"].nunique() if "PHONG BAN" in df.columns else 0
 
     # ====== HIỂN THỊ ======
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         kpi_card("🏢 Số phòng ban", f"{so_phong_ban:,}")
@@ -470,8 +469,7 @@ if menu == "📊  Tổng quan":
     with c4:
         kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
 
-    with c5:
-        kpi_card("📊 TB DV/người", f"{dv_tb:.2f}")
+    
 
     # ======================
     # 🎯 BIỂU ĐỒ TRÒN
