@@ -179,7 +179,7 @@ with col_logo:
 
 with col_title:
     st.markdown(
-        '<div class="main-title">Dashboard Khách Hàng BIDV</div>',
+        '<div class="main-title">Báo cáo tổng quan nền khách hàng mass tại chi nhánh</div>',
         unsafe_allow_html=True
     )
 
