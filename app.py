@@ -541,89 +541,99 @@ elif menu == "🎯  HDVKKH_BQ":
     df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
 
     # =========================
-    # TÍNH SỐ LIỆU
+    # 🔥 CHỌN PHÒNG BAN (MỚI)
     # =========================
-    duoi_5 = (df_cs[col_hdv] <= 5_000_000).sum()
-    tu_5_20 = ((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum()
-    tu_20_50 = ((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum()
-    tren_50 = (df_cs[col_hdv] > 50_000_000).sum()
+    if "PHONG BAN" not in df_cs.columns:
+        st.error("❌ Không có cột PHONG BAN")
+        st.stop()
+
+    list_pb = sorted(df_cs["PHONG BAN"].dropna().unique())
+
+    selected_pb = st.selectbox(
+        "🏢 Chọn phòng ban",
+        list_pb
+    )
+
+    # lọc theo phòng ban
+    df_pb = df_cs[df_cs["PHONG BAN"] == selected_pb].copy()
 
     # =========================
-    # TÍNH TỔNG HDV
+    # 🔥 TỔNG TIỀN PHÒNG BAN
     # =========================
-    tong_hdv = df_cs[col_hdv].sum()
-    
-    hdv_duoi_5 = df_cs[df_cs[col_hdv] <= 5_000_000][col_hdv].sum()
-    hdv_5_20 = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)][col_hdv].sum()
-    hdv_20_50 = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)][col_hdv].sum()
-    hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
+    tong_hdv_pb = df_pb[col_hdv].fillna(0).sum()
 
-    # =========================
-    # KPI CARD GỘP (MỚI)
-    # =========================
-    st.markdown("### 📊 Phân nhóm khách hàng")
+    st.markdown("### 💰 Tổng phòng ban")
 
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2 = st.columns(2)
 
     with c1:
-        kpi_card("🏦 Tổng",
-            f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
-        )
+        kpi_card("🏢 Phòng ban", selected_pb)
 
     with c2:
-        kpi_card("💚 <5TR",
-            f"{duoi_5:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_duoi_5:,.0f}</span>"
-        )
-    
-    with c3:
-        kpi_card("💰 5-20TR",
-            f"{tu_5_20:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_5_20:,.0f}</span>"
-        )
-    
-    with c4:
-        kpi_card("🏆 20-50TR",
-            f"{tu_20_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_20_50:,.0f}</span>"
-        )
-    
-    with c5:
-        kpi_card("🔥 >50TR",
-            f"{tren_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_tren_50:,.0f}</span>"
+        kpi_card(
+            "💰 Tổng tiền",
+            f"<span style='font-size:26px;font-weight:bold;color:#E6A700'>{tong_hdv_pb:,.0f}</span>"
         )
 
     # =========================
-    # SELECT BOX
+    # TÍNH SỐ LIỆU THEO PHÒNG
     # =========================
+    duoi_5 = (df_pb[col_hdv] <= 5_000_000).sum()
+    tu_5_20 = ((df_pb[col_hdv] > 5_000_000) & (df_pb[col_hdv] <= 20_000_000)).sum()
+    tu_20_50 = ((df_pb[col_hdv] > 20_000_000) & (df_pb[col_hdv] <= 50_000_000)).sum()
+    tren_50 = (df_pb[col_hdv] > 50_000_000).sum()
+
+    hdv_duoi_5 = df_pb[df_pb[col_hdv] <= 5_000_000][col_hdv].sum()
+    hdv_5_20 = df_pb[(df_pb[col_hdv] > 5_000_000) & (df_pb[col_hdv] <= 20_000_000)][col_hdv].sum()
+    hdv_20_50 = df_pb[(df_pb[col_hdv] > 20_000_000) & (df_pb[col_hdv] <= 50_000_000)][col_hdv].sum()
+    hdv_tren_50 = df_pb[df_pb[col_hdv] > 50_000_000][col_hdv].sum()
+
+    # =========================
+    # SELECT BOX NHÓM KH
+    # =========================
+    st.markdown("### 📌 Chọn nhóm khách hàng")
+
     option = st.selectbox(
-        "📌 Chọn nhóm khách hàng",
+        "Chọn nhóm",
         ["<5TR", "5-20TR", "20-50TR", ">50TR"]
     )
 
-    df_show = df_cs.copy()
-
+    # =========================
+    # FILTER DATA
+    # =========================
     if option == "<5TR":
-        df_show = df_cs[df_cs[col_hdv] <= 5_000_000]
+        df_show = df_pb[df_pb[col_hdv] <= 5_000_000]
+        tong_tien = hdv_duoi_5
     elif option == "5-20TR":
-        df_show = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)]
+        df_show = df_pb[(df_pb[col_hdv] > 5_000_000) & (df_pb[col_hdv] <= 20_000_000)]
+        tong_tien = hdv_5_20
     elif option == "20-50TR":
-        df_show = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)]
+        df_show = df_pb[(df_pb[col_hdv] > 20_000_000) & (df_pb[col_hdv] <= 50_000_000)]
+        tong_tien = hdv_20_50
     else:
-        df_show = df_cs[df_cs[col_hdv] > 50_000_000]
+        df_show = df_pb[df_pb[col_hdv] > 50_000_000]
+        tong_tien = hdv_tren_50
 
     # =========================
-    # KPI KẾT QUẢ
+    # KPI KẾT QUẢ (SỬA ĐẸP)
     # =========================
     st.markdown("### 📊 Kết quả")
 
-    col_kq1, col_kq2 = st.columns([1, 2])
+    c1, c2 = st.columns(2)
 
-    with col_kq1:
+    with c1:
         kpi_card("👥 Số khách", f"{len(df_show):,}")
 
-    with col_kq2:
-        st.success(f"👉 Nhóm **{option}** có **{len(df_show):,} khách hàng**")
+    with c2:
+        kpi_card(
+            "💰 Tổng tiền",
+            f"<span style='font-size:26px;font-weight:bold;color:#E6A700'>{tong_tien:,.0f}</span>"
+        )
+
+    st.success(f"👉 Phòng **{selected_pb}** - Nhóm **{option}** có **{len(df_show):,} khách hàng**")
 
     # =========================
-    # BIỂU ĐỒ MINI (GIỮ NGUYÊN)
+    # BIỂU ĐỒ
     # =========================
     import plotly.express as px
 
@@ -640,15 +650,12 @@ elif menu == "🎯  HDVKKH_BQ":
         text="Số KH"
     )
 
-    fig.update_layout(
-        showlegend=False,
-        margin=dict(t=30, b=20)
-    )
+    fig.update_layout(showlegend=False, margin=dict(t=30, b=20))
 
     st.plotly_chart(fig, use_container_width=True)
 
     # =========================
-    # DATA TABLE (GIỮ NGUYÊN)
+    # DATA TABLE
     # =========================
     st.markdown("### 📋 Danh sách khách hàng")
 
