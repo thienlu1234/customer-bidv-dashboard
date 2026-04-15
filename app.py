@@ -632,28 +632,7 @@ elif menu == "🎯  HDVKKH_BQ":
 
     st.success(f"👉 Phòng **{selected_pb}** - Nhóm **{option}** có **{len(df_show):,} khách hàng**")
 
-    # =========================
-    # BIỂU ĐỒ
-    # =========================
-    import plotly.express as px
-
-    df_chart = pd.DataFrame({
-        "Nhóm": ["<5TR", "5-20TR", "20-50TR", ">50TR"],
-        "Số KH": [duoi_5, tu_5_20, tu_20_50, tren_50]
-    })
-
-    fig = px.bar(
-        df_chart,
-        x="Nhóm",
-        y="Số KH",
-        color="Nhóm",
-        text="Số KH"
-    )
-
-    fig.update_layout(showlegend=False, margin=dict(t=30, b=20))
-
-    st.plotly_chart(fig, use_container_width=True)
-
+    
     # =========================
     # DATA TABLE
     # =========================
