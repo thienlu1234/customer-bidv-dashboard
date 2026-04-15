@@ -524,96 +524,73 @@ if menu == "📊  Tổng quan":
 # 2. CHĂM SÓC KHÁCH HÀNG
 # =========================
 elif menu == "🎯  HDVKKH_BQ":
+    
+    st.markdown(
+        '<div class="section-title">🎯 Phân loại theo HDVKKH_BQ</div>',
+        unsafe_allow_html=True
+    )
+
+    df_cs = df[df[col_status].isin(["Active", "New"])].copy()
+
+    col_hdv = "HDVKKH_BQ"
+
+    if col_hdv not in df_cs.columns:
+        st.error("❌ Không tìm thấy cột HDVKKH_BQ")
+        st.stop()
+
+    df_cs[col_hdv] = pd.to_numeric(df_cs[col_hdv], errors="coerce")
 
     # =========================
-    # 📊 TỔNG QUAN HDVKKH_BQ (THÊM MỚI)
+    # TÍNH SỐ LIỆU
     # =========================
-    st.markdown("## 📌 Tổng quan HDVKKH_BQ")
+    duoi_5 = (df_cs[col_hdv] <= 5_000_000).sum()
+    tu_5_20 = ((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum()
+    tu_20_50 = ((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum()
+    tren_50 = (df_cs[col_hdv] > 50_000_000).sum()
+
+    # =========================
+    # TÍNH TỔNG HDV
+    # =========================
+    tong_hdv = df_cs[col_hdv].sum()
     
-    df_cs_all = df[df[col_status].isin(["Active", "New"])].copy()
-    
-    col_hdv = "HDVKKH_BQ"
-    df_cs_all[col_hdv] = pd.to_numeric(df_cs_all[col_hdv], errors="coerce")
-    
-    # ===== TÍNH TOÁN =====
-    tong_kh_all = len(df_cs_all)
-    tong_hdv_all = df_cs_all[col_hdv].sum()
-    
-    duoi_5_all = (df_cs_all[col_hdv] <= 5_000_000).sum()
-    tu_5_20_all = ((df_cs_all[col_hdv] > 5_000_000) & (df_cs_all[col_hdv] <= 20_000_000)).sum()
-    tu_20_50_all = ((df_cs_all[col_hdv] > 20_000_000) & (df_cs_all[col_hdv] <= 50_000_000)).sum()
-    tren_50_all = (df_cs_all[col_hdv] > 50_000_000).sum()
-    
-    hdv_duoi_5_all = df_cs_all[df_cs_all[col_hdv] <= 5_000_000][col_hdv].sum()
-    hdv_5_20_all = df_cs_all[(df_cs_all[col_hdv] > 5_000_000) & (df_cs_all[col_hdv] <= 20_000_000)][col_hdv].sum()
-    hdv_20_50_all = df_cs_all[(df_cs_all[col_hdv] > 20_000_000) & (df_cs_all[col_hdv] <= 50_000_000)][col_hdv].sum()
-    hdv_tren_50_all = df_cs_all[df_cs_all[col_hdv] > 50_000_000][col_hdv].sum()
-    
-    # ===== CARD UI =====
-    def kpi_card_overview(title, so_kh, so_tien):
-        st.markdown(f"""
-        <div style="
-            background:white;
-            padding:18px;
-            border-radius:14px;
-            text-align:center;
-            box-shadow:0 2px 8px rgba(0,0,0,0.05);
-        ">
-            <div style="font-size:14px; color:#888;">{title}</div>
-    
-            <div style="font-size:20px; font-weight:700; color:#0E6F66;">
-                {so_kh}
-            </div>
-    
-            <div style="
-                font-size:22px;
-                font-weight:700;
-                color:#E6A700;
-            ">
-                {so_tien}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # ===== HIỂN THỊ =====
+    hdv_duoi_5 = df_cs[df_cs[col_hdv] <= 5_000_000][col_hdv].sum()
+    hdv_5_20 = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)][col_hdv].sum()
+    hdv_20_50 = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)][col_hdv].sum()
+    hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
+
+    # =========================
+    # KPI CARD GỘP (MỚI)
+    # =========================
+    st.markdown("### 📊 Phân nhóm khách hàng")
+
     c1, c2, c3, c4, c5 = st.columns(5)
-    
+
     with c1:
-        kpi_card_overview(
-            "🏦 Tổng KH",
-            f"{tong_kh_all:,}",
-            f"{tong_hdv_all:,.0f}"
+        kpi_card("🏦 Tổng",
+            f"{len(df_cs):,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{tong_hdv:,.0f}</span>"
         )
-    
+
     with c2:
-        kpi_card_overview(
-            "💚 <5TR",
-            f"{duoi_5_all:,}",
-            f"{hdv_duoi_5_all:,.0f}"
+        kpi_card("💚 <5TR",
+            f"{duoi_5:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_duoi_5:,.0f}</span>"
         )
     
     with c3:
-        kpi_card_overview(
-            "💰 5-20TR",
-            f"{tu_5_20_all:,}",
-            f"{hdv_5_20_all:,.0f}"
+        kpi_card("💰 5-20TR",
+            f"{tu_5_20:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_5_20:,.0f}</span>"
         )
     
     with c4:
-        kpi_card_overview(
-            "🏆 20-50TR",
-            f"{tu_20_50_all:,}",
-            f"{hdv_20_50_all:,.0f}"
+        kpi_card("🏆 20-50TR",
+            f"{tu_20_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_20_50:,.0f}</span>"
         )
     
     with c5:
-        kpi_card_overview(
-            "🔥 >50TR",
-            f"{tren_50_all:,}",
-            f"{hdv_tren_50_all:,.0f}"
+        kpi_card("🔥 >50TR",
+            f"{tren_50:,}<br><span style='font-size:22px;font-weight:bold;color:#E6A700'>{hdv_tren_50:,.0f}</span>"
         )
     
-    st.markdown("---")
+    
 
 
     
