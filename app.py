@@ -557,7 +557,25 @@ elif menu == "🎯  HDVKKH_BQ":
     # lọc theo phòng ban
     df_pb = df_cs[df_cs["PHONG BAN"] == selected_pb].copy()
 
-   
+
+    # =========================
+    # 🔥 TỔNG TIỀN PHÒNG BAN
+    # =========================
+    tong_hdv_pb = df_pb[col_hdv].fillna(0).sum()
+
+    st.markdown("### 💰 Tổng phòng ban")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        kpi_card("🏢 Phòng ban", selected_pb)
+
+    with c2:
+        kpi_card(
+            "💰 Tổng tiền",
+            f"<span style='font-size:26px;font-weight:bold;color:#E6A700'>{tong_hdv_pb:,.0f}</span>"
+        )
+        
 
     # =========================
     # TÍNH SỐ LIỆU THEO PHÒNG
