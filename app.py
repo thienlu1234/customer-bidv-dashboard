@@ -927,17 +927,30 @@ elif menu == "👨‍💼  Cán bộ":
     df_all = df.copy()
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
-    # kiểm tra cột
-    required_cols = ["CANBO_QUANLY", "HO VA TEN", "TOTAL_SPDV", "HDVKKH_BQ"]
+    # =========================
+    # CHECK CỘT
+    # =========================
+    required_cols = [
+        "CANBO_QUANLY", 
+        "HO VA TEN", 
+        "TOTAL_SPDV", 
+        "HDVKKH_BQ",
+        "HDVCKH_CK",
+        "DNCK"
+    ]
 
     for col in required_cols:
         if col not in df.columns:
             st.error(f"❌ Thiếu cột: {col}")
             st.stop()
 
-    # chuyển số
-    df_kh["TOTAL_SPDV"] = pd.to_numeric(df_kh["TOTAL_SPDV"], errors="coerce")
-    df_kh["HDVKKH_BQ"] = pd.to_numeric(df_kh["HDVKKH_BQ"], errors="coerce")
+    # =========================
+    # CHUYỂN SỐ
+    # =========================
+    numeric_cols = ["TOTAL_SPDV", "HDVKKH_BQ", "HDVCKH_CK", "DNCK"]
+
+    for col in numeric_cols:
+        df_kh[col] = pd.to_numeric(df_kh[col], errors="coerce").fillna(0)
 
     # =========================
     # GROUP ALL KH
@@ -952,7 +965,9 @@ elif menu == "👨‍💼  Cán bộ":
     group_active = df_kh.groupby(["CANBO_QUANLY", "HO VA TEN"]).agg(
         tong_kh_active=("CANBO_QUANLY", "count"),
         tong_spdv=("TOTAL_SPDV", "sum"),
-        tong_hdv=("HDVKKH_BQ", "sum")
+        tong_hdv_bq=("HDVKKH_BQ", "sum"),
+        tong_hdv_ck=("HDVCKH_CK", "sum"),
+        tong_dnck=("DNCK", "sum")
     ).reset_index()
 
     # =========================
@@ -968,22 +983,31 @@ elif menu == "👨‍💼  Cán bộ":
     # =========================
     # KPI
     # =========================
-    group_cbql["dv_trung_binh"] = group_cbql["tong_spdv"] / group_cbql["tong_kh_active"].replace(0, 1)
+    group_cbql["dv_trung_binh"] = (
+        group_cbql["tong_spdv"] / group_cbql["tong_kh_active"].replace(0, 1)
+    )
 
     # =========================
-    # FORMAT
+    # FORMAT HIỂN THỊ
     # =========================
     group_cbql["Tổng KH"] = group_cbql["tong_kh_all"].apply(lambda x: f"{int(x):,}")
     group_cbql["KH Active+New"] = group_cbql["tong_kh_active"].apply(lambda x: f"{int(x):,}")
     group_cbql["Tổng DV"] = group_cbql["tong_spdv"].apply(lambda x: f"{int(x):,}")
-    group_cbql["Tổng HDV"] = group_cbql["tong_hdv"].apply(lambda x: f"{int(x):,}")
+
+    group_cbql["HDVKKH_BQ"] = group_cbql["tong_hdv_bq"].apply(lambda x: f"{int(x):,}")
+    group_cbql["HDVCKH_CK"] = group_cbql["tong_hdv_ck"].apply(lambda x: f"{int(x):,}")
+    group_cbql["DNCK"] = group_cbql["tong_dnck"].apply(lambda x: f"{int(x):,}")
+
     group_cbql["DV/KH"] = group_cbql["dv_trung_binh"].apply(lambda x: f"{x:.2f}")
 
     # =========================
-    # HIỂN THỊ BẢNG TỔNG
+    # SORT
     # =========================
     group_cbql = group_cbql.sort_values(by="tong_kh_all", ascending=False)
 
+    # =========================
+    # HIỂN THỊ
+    # =========================
     st.dataframe(
         group_cbql[[
             "CANBO_QUANLY",
@@ -991,7 +1015,9 @@ elif menu == "👨‍💼  Cán bộ":
             "Tổng KH",
             "KH Active+New",
             "Tổng DV",
-            "Tổng HDV",
+            "HDVKKH_BQ",
+            "HDVCKH_CK",
+            "DNCK",
             "DV/KH"
         ]],
         use_container_width=True,
