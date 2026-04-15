@@ -400,15 +400,20 @@ if menu == "📊  Tổng quan":
         unsafe_allow_html=True
     )
 
-    total = len(df)
-    active = df[col_status].isin(["Active", "New"]).sum()
-    
-    frozen = (df[col_status] == "Frozen").sum()
-    dormant = (df[col_status] == "Dormant").sum()
+    # ======================
+    # CHUẨN HÓA STATUS
+    # ======================
+    status_series = df[col_status].astype("string").str.strip()
 
-    # 🔥 GỘP NaN + rỗng vào Dormant
-    nan_count = df[col_status].isna().sum() + (df[col_status] == "").sum()
-    dormant = dormant + nan_count
+    total = len(df)
+
+    # Active gộp cả New
+    active = status_series.isin(["Active", "New"]).sum()
+
+    frozen = (status_series == "Frozen").sum()
+
+    # mọi phần còn lại tính vào Dormant
+    dormant = total - active - frozen
 
     # ======================
     # KPI
@@ -428,65 +433,43 @@ if menu == "📊  Tổng quan":
         kpi_card("😴 Dormant", f"{dormant:,}")
 
     # ======================
-    # 🎯 BIỂU ĐỒ TRÒN XỊN (CHUẨN 3 NHÓM)
+    # 🎯 BIỂU ĐỒ TRÒN XỊN
     # ======================
-    
     st.markdown("### 📊 Tỷ lệ khách hàng")
-    
-    # 🔥 ĐẢM BẢO DỮ LIỆU GIỐNG KPI
-    active_chart = df[col_status].isin(["Active", "New"]).sum()
-    frozen_chart = (df[col_status] == "Frozen").sum()
-    
-    # GỘP Dormant + NaN + rỗng
-    dormant_chart = (
-        (df[col_status] == "Dormant").sum()
-        + df[col_status].isna().sum()
-        + (df[col_status] == "").sum()
-    )
-    
+
     labels = ["Active", "Frozen", "Dormant"]
-    values = [active_chart, frozen_chart, dormant_chart]
-    
-    # CENTER CHO ĐẸP
+    values = [active, frozen, dormant]
+
     col_left, col_center, col_right = st.columns([1, 2, 1])
-    
+
     with col_center:
         fig = go.Figure(data=[go.Pie(
             labels=labels,
             values=values,
-    
             hole=0.55,
-    
-            # highlight Active
             pull=[0.06, 0, 0],
-    
             marker=dict(
                 colors=[
-                    "#0E6F66",  # Active (xanh BIDV)
-                    "#5DADE2",  # Frozen
-                    "#EC7063"   # Dormant
+                    "#0E6F66",
+                    "#5DADE2",
+                    "#EC7063"
                 ],
                 line=dict(color="white", width=3)
             ),
-    
             textinfo="percent",
             textfont=dict(size=18, color="white"),
-    
             hovertemplate="<b>%{label}</b><br>Số KH: %{value:,}<br>Tỷ lệ: %{percent}<extra></extra>"
         )])
-    
+
         fig.update_layout(
             showlegend=True,
-    
             legend=dict(
                 orientation="h",
                 y=-0.1,
                 x=0.5,
                 xanchor="center"
             ),
-    
             margin=dict(t=20, b=40, l=0, r=0),
-    
             annotations=[dict(
                 text="Tỉ lệ<br>khách hàng",
                 x=0.5, y=0.5,
@@ -494,7 +477,7 @@ if menu == "📊  Tổng quan":
                 showarrow=False
             )]
         )
-    
+
         st.plotly_chart(fig, use_container_width=True)
 
 # =========================
