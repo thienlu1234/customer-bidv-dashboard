@@ -1480,6 +1480,7 @@ elif menu == "💼  Nghề nghiệp":
         .dropna()
         .astype(str)
         .str.strip()
+        .loc[lambda x: ~x.str.contains("0x", na=False)]  # 🔥 bỏ 0x2a
         .unique()
     )
 
