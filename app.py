@@ -595,21 +595,28 @@ elif menu == "🎯  HDVKKH_BQ":
 
     option = st.selectbox(
         "Chọn nhóm",
-        ["<5TR", "5-20TR", "20-50TR", ">50TR"]
+        ["Tổng", "<5TR", "5-20TR", "20-50TR", ">50TR"]
     )
 
     # =========================
     # FILTER DATA
     # =========================
-    if option == "<5TR":
+    if option == "Tổng":
+    df_show = df_pb.copy()
+    tong_tien = tong_hdv_pb
+
+    elif option == "<5TR":
         df_show = df_pb[df_pb[col_hdv] <= 5_000_000]
         tong_tien = hdv_duoi_5
+    
     elif option == "5-20TR":
         df_show = df_pb[(df_pb[col_hdv] > 5_000_000) & (df_pb[col_hdv] <= 20_000_000)]
         tong_tien = hdv_5_20
+    
     elif option == "20-50TR":
         df_show = df_pb[(df_pb[col_hdv] > 20_000_000) & (df_pb[col_hdv] <= 50_000_000)]
         tong_tien = hdv_20_50
+    
     else:
         df_show = df_pb[df_pb[col_hdv] > 50_000_000]
         tong_tien = hdv_tren_50
