@@ -404,7 +404,7 @@ if menu == "📊  Tổng quan":
     # CHUẨN HÓA STATUS
     # ======================
     status_series = df[col_status].astype("string").str.strip()
-    st.write(status_series.value_counts(dropna=False))
+    
     total = len(df)
 
     # Active gộp cả New
@@ -457,6 +457,7 @@ if menu == "📊  Tổng quan":
                 line=dict(color="white", width=3)
             ),
             textinfo="percent",
+            texttemplate="%{percent:.2%}",
             textfont=dict(size=18, color="white"),
             hovertemplate="<b>%{label}</b><br>Số KH: %{value:,}<br>Tỷ lệ: %{percent}<extra></extra>"
         )])
