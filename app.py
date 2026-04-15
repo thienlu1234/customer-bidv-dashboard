@@ -439,7 +439,7 @@ if menu == "📊  Tổng quan":
     
 
     # convert số an toàn
-    for col in [col_hdv_bq, col_hdv_ck, col_dnck, col_spdv]:
+    for col in [col_hdv_bq, col_hdv_ck, col_dnck]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
