@@ -526,7 +526,7 @@ if menu == "📊  Tổng quan":
 elif menu == "🎯  HDVKKH_BQ":
 
     st.markdown(
-        '<div class="section-title">🎯 Phân loại theo HDVKKH_BQ</div>',
+        '<div class="section-title">🎯 Phân loại HDVKKH_BQ theo phòng</div>',
         unsafe_allow_html=True
     )
 
