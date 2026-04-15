@@ -526,7 +526,7 @@ if menu == "📊  Tổng quan":
 elif menu == "🎯  HDVKKH_BQ":
     
     st.markdown(
-        '<div class="section-title">🎯 Phân loại theo HDVKKH_BQ</div>',
+        '<div class="section-title">🎯 Tổng quan HDVKKH_BQ</div>',
         unsafe_allow_html=True
     )
 
@@ -561,7 +561,7 @@ elif menu == "🎯  HDVKKH_BQ":
     # =========================
     # KPI CARD GỘP (MỚI)
     # =========================
-    st.markdown("### 📊 Phân nhóm khách hàng")
+    
 
     c1, c2, c3, c4, c5 = st.columns(5)
 
