@@ -320,7 +320,8 @@ if "df_processed" not in st.session_state:
     col_status = find_column(df_temp, ["TRANGTHAI", "STATUS"])
     if col_status:
         df_temp[col_status] = df_temp[col_status].astype("string").str.strip()
-
+        df_temp[col_status] = df_temp[col_status].fillna("Dormant")
+        df_temp[col_status] = df_temp[col_status].replace("", "Dormant")
     # chuyển numeric 1 lần
     numeric_cols = ["TOTAL_SPDV", "HDVKKH_BQ", "HDVCKH_CK", "DNCK"]
 
