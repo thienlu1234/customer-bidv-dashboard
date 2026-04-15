@@ -1114,14 +1114,29 @@ elif menu == "🏢  Phòng ban":
     df_all = df.copy()
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
-    # kiểm tra cột
-    if "PHONG BAN" not in df.columns:
-        st.error("❌ Không tìm thấy cột PHONG BAN")
-        st.stop()
+    # =========================
+    # CHECK CỘT
+    # =========================
+    required_cols = [
+        "PHONG BAN",
+        "TOTAL_SPDV",
+        "HDVKKH_BQ",
+        "HDVCKH_CK",
+        "DNCK"
+    ]
 
-    # chuyển số
-    df_kh["TOTAL_SPDV"] = pd.to_numeric(df_kh["TOTAL_SPDV"], errors="coerce")
-    df_kh["HDVKKH_BQ"] = pd.to_numeric(df_kh["HDVKKH_BQ"], errors="coerce")
+    for col in required_cols:
+        if col not in df.columns:
+            st.error(f"❌ Thiếu cột: {col}")
+            st.stop()
+
+    # =========================
+    # CHUYỂN SỐ
+    # =========================
+    numeric_cols = ["TOTAL_SPDV", "HDVKKH_BQ", "HDVCKH_CK", "DNCK"]
+
+    for col in numeric_cols:
+        df_kh[col] = pd.to_numeric(df_kh[col], errors="coerce").fillna(0)
 
     # =========================
     # GROUP ALL KH
@@ -1136,7 +1151,9 @@ elif menu == "🏢  Phòng ban":
     group_active = df_kh.groupby("PHONG BAN").agg(
         tong_kh_active=("PHONG BAN", "count"),
         tong_spdv=("TOTAL_SPDV", "sum"),
-        tong_hdv=("HDVKKH_BQ", "sum")
+        tong_hdv_bq=("HDVKKH_BQ", "sum"),
+        tong_hdv_ck=("HDVCKH_CK", "sum"),
+        tong_dnck=("DNCK", "sum")
     ).reset_index()
 
     # =========================
@@ -1152,15 +1169,21 @@ elif menu == "🏢  Phòng ban":
     # =========================
     # KPI
     # =========================
-    group_pb["dv_trung_binh"] = group_pb["tong_spdv"] / group_pb["tong_kh_active"].replace(0, 1)
+    group_pb["dv_trung_binh"] = (
+        group_pb["tong_spdv"] / group_pb["tong_kh_active"].replace(0, 1)
+    )
 
     # =========================
-    # FORMAT
+    # FORMAT HIỂN THỊ
     # =========================
     group_pb["Tổng KH"] = group_pb["tong_kh_all"].apply(lambda x: f"{int(x):,}")
     group_pb["KH Active+New"] = group_pb["tong_kh_active"].apply(lambda x: f"{int(x):,}")
     group_pb["Tổng DV"] = group_pb["tong_spdv"].apply(lambda x: f"{int(x):,}")
-    group_pb["Tổng HDV"] = group_pb["tong_hdv"].apply(lambda x: f"{int(x):,}")
+
+    group_pb["HDVKKH_BQ"] = group_pb["tong_hdv_bq"].apply(lambda x: f"{int(x):,}")
+    group_pb["HDVCKH_CK"] = group_pb["tong_hdv_ck"].apply(lambda x: f"{int(x):,}")
+    group_pb["DNCK"] = group_pb["tong_dnck"].apply(lambda x: f"{int(x):,}")
+
     group_pb["DV/KH"] = group_pb["dv_trung_binh"].apply(lambda x: f"{x:.2f}")
 
     # =========================
@@ -1169,7 +1192,7 @@ elif menu == "🏢  Phòng ban":
     group_pb = group_pb.sort_values(by="tong_kh_all", ascending=False)
 
     # =========================
-    # HIỂN THỊ BẢNG TỔNG
+    # HIỂN THỊ
     # =========================
     st.dataframe(
         group_pb[[
@@ -1177,7 +1200,9 @@ elif menu == "🏢  Phòng ban":
             "Tổng KH",
             "KH Active+New",
             "Tổng DV",
-            "Tổng HDV",
+            "HDVKKH_BQ",
+            "HDVCKH_CK",
+            "DNCK",
             "DV/KH"
         ]],
         use_container_width=True,
