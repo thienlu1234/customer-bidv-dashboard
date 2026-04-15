@@ -428,16 +428,26 @@ if menu == "📊  Tổng quan":
         kpi_card("😴 Dormant", f"{dormant:,}")
 
     # ======================
-    # 🎯 BIỂU ĐỒ TRÒN XỊN
+    # 🎯 BIỂU ĐỒ TRÒN XỊN (CHUẨN 3 NHÓM)
     # ======================
     
     st.markdown("### 📊 Tỷ lệ khách hàng")
     
-    # 🔥 KHÔNG còn New
-    labels = ["Active", "Frozen", "Dormant"]
-    values = [active, frozen, dormant]
+    # 🔥 ĐẢM BẢO DỮ LIỆU GIỐNG KPI
+    active_chart = df[col_status].isin(["Active", "New"]).sum()
+    frozen_chart = (df[col_status] == "Frozen").sum()
     
-    # CHIA LAYOUT CHO ĐẸP (center)
+    # GỘP Dormant + NaN + rỗng
+    dormant_chart = (
+        (df[col_status] == "Dormant").sum()
+        + df[col_status].isna().sum()
+        + (df[col_status] == "").sum()
+    )
+    
+    labels = ["Active", "Frozen", "Dormant"]
+    values = [active_chart, frozen_chart, dormant_chart]
+    
+    # CENTER CHO ĐẸP
     col_left, col_center, col_right = st.columns([1, 2, 1])
     
     with col_center:
@@ -447,15 +457,14 @@ if menu == "📊  Tổng quan":
     
             hole=0.55,
     
-            # 🔥 chỉ highlight Active
+            # highlight Active
             pull=[0.06, 0, 0],
     
             marker=dict(
                 colors=[
-                    "#0E6F66",  # xanh BIDV (Active)
-                    "#5DADE2",  # xanh nhạt (Frozen)
-                    "#EC7063"   # đỏ (Dormant)
-                    
+                    "#0E6F66",  # Active (xanh BIDV)
+                    "#5DADE2",  # Frozen
+                    "#EC7063"   # Dormant
                 ],
                 line=dict(color="white", width=3)
             ),
