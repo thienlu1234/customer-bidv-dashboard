@@ -528,7 +528,7 @@ elif menu == "🎯  HDVKKH_BQ":
     # =========================
     # TÍNH SỐ LIỆU
     # =========================
-    duoi_5 = (df_cs[col_hdv] <= 5_000_000).sum()
+    duoi_5 = ((df_cs[col_hdv] <= 5_000_000) | (df_cs[col_hdv].isna())).sum()
     tu_5_20 = ((df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)).sum()
     tu_20_50 = ((df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)).sum()
     tren_50 = (df_cs[col_hdv] > 50_000_000).sum()
@@ -538,7 +538,9 @@ elif menu == "🎯  HDVKKH_BQ":
     # =========================
     tong_hdv = df_cs[col_hdv].sum()
     
-    hdv_duoi_5 = df_cs[df_cs[col_hdv] <= 5_000_000][col_hdv].sum()
+    hdv_duoi_5 = df_cs[
+        (df_cs[col_hdv] <= 5_000_000) | (df_cs[col_hdv].isna())
+    ][col_hdv].sum()
     hdv_5_20 = df_cs[(df_cs[col_hdv] > 5_000_000) & (df_cs[col_hdv] <= 20_000_000)][col_hdv].sum()
     hdv_20_50 = df_cs[(df_cs[col_hdv] > 20_000_000) & (df_cs[col_hdv] <= 50_000_000)][col_hdv].sum()
     hdv_tren_50 = df_cs[df_cs[col_hdv] > 50_000_000][col_hdv].sum()
