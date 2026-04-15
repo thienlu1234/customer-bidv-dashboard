@@ -615,14 +615,20 @@ elif menu == "🎯  HDVKKH_BQ":
     if "PHONG BAN" not in df_cs.columns:
         st.error("❌ Không có cột PHONG BAN")
         st.stop()
-
-    list_pb = sorted(df_cs["PHONG BAN"].dropna().unique())
-
+    
+    list_pb = sorted(
+        df_cs["PHONG BAN"]
+        .dropna()
+        .astype(str)
+        .loc[lambda x: ~x.str.startswith("0x")]
+        .unique()
+    )
+    
     selected_pb = st.selectbox(
         "🏢 Chọn phòng ban",
         list_pb
     )
-
+    
     # lọc theo phòng ban
     df_pb = df_cs[df_cs["PHONG BAN"] == selected_pb].copy()
 
