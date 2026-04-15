@@ -215,24 +215,7 @@ menu = option_menu(
         },
     }
 )
-# =========================
-# LOAD DATA FUNCTION (PHẢI ĐẶT LÊN TRÊN)
-# =========================
-@st.cache_data
-def load_data(file):
 
-    try:
-        df = pd.read_excel(file).copy()
-    except:
-        try:
-            df = pd.read_excel(file, engine="pyxlsb").copy()
-        except:
-            try:
-                df = pd.read_csv(file).copy()
-            except:
-                return None
-    df.columns = [str(c).strip().upper() for c in df.columns]
-    return df
 
 
 # =========================
@@ -405,7 +388,7 @@ if menu == "📊  Tổng quan":
     # ======================
     # CHUẨN HÓA STATUS
     # ======================
-    status_series = df[col_status].astype("string").str.strip()
+    status_series = df[col_status]
 
     total = len(df)
     active = status_series.isin(["Active", "New"]).sum()
