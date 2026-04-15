@@ -1459,7 +1459,7 @@ elif menu == "👶  Độ tuổi":
 elif menu == "💼  Nghề nghiệp":
 
     st.markdown(
-        '<div class="section-title">💼 Phân loại theo nghề nghiệp</div>',
+        '<div class="section-title">💼 Chi tiết theo nghề nghiệp</div>',
         unsafe_allow_html=True
     )
 
@@ -1468,7 +1468,33 @@ elif menu == "💼  Nghề nghiệp":
     # =========================
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
-    # tìm cột nghề nghiệp
+    # =========================
+    # 🔥 CHỌN PHÒNG BAN (GIỐNG ĐỘ TUỔI)
+    # =========================
+    if "PHONG BAN" not in df_kh.columns:
+        st.error("❌ Không có cột PHONG BAN")
+        st.stop()
+
+    list_pb = ["Tất cả"] + sorted(
+        df_kh["PHONG BAN"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .unique()
+    )
+
+    selected_pb = st.selectbox(
+        "🏢 Chọn phòng ban",
+        list_pb
+    )
+
+    # lọc theo phòng ban
+    if selected_pb != "Tất cả":
+        df_kh = df_kh[df_kh["PHONG BAN"] == selected_pb]
+
+    # =========================
+    # TÌM CỘT NGHỀ NGHIỆP
+    # =========================
     col_job = None
     for col in df.columns:
         if "NGHE" in col.upper() or "JOB" in col.upper():
@@ -1480,33 +1506,24 @@ elif menu == "💼  Nghề nghiệp":
         st.stop()
 
     # =========================
-    # BẢNG TỔNG
+    # CHỌN NGHỀ NGHIỆP
     # =========================
-    result = df_kh[col_job].value_counts().reset_index()
-    result.columns = ["Nghề nghiệp", "Số KH"]
-
-    result["Số KH"] = result["Số KH"].apply(lambda x: f"{x:,}")
-
-    st.dataframe(result, use_container_width=True, hide_index=True)
-
-    # =========================
-    # 🔥 CHI TIẾT THEO NGHỀ NGHIỆP
-    # =========================
-    st.markdown("---")
-    st.markdown(
-        '<div class="section-title">💼 Chi tiết theo nghề nghiệp</div>',
-        unsafe_allow_html=True
+    list_job = (
+        df_kh[col_job]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .unique()
     )
-
-    # chọn nghề
-    list_job = result["Nghề nghiệp"].dropna().unique()
 
     selected_job = st.selectbox(
         "Chọn nghề nghiệp",
-        list_job
+        sorted(list_job)
     )
 
-    # lọc dữ liệu
+    # =========================
+    # LỌC DATA
+    # =========================
     df_job = df_kh[df_kh[col_job] == selected_job].copy()
 
     # =========================
@@ -1530,7 +1547,7 @@ elif menu == "💼  Nghề nghiệp":
     tong_spdv = df_job[col_spdv].fillna(0).sum()
 
     # =========================
-    # KPI ĐẸP BIDV
+    # KPI ĐẸP
     # =========================
     st.markdown("### 📊 Tổng hợp theo nghề nghiệp")
 
@@ -1559,6 +1576,7 @@ elif menu == "💼  Nghề nghiệp":
         use_container_width=True,
         height=500,
         hide_index=True
+    
     )
 else:
     st.info("👉 Upload file để bắt đầu")
