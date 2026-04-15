@@ -1323,7 +1323,28 @@ elif menu == "👶  Độ tuổi":
     # chỉ lấy Active + New
     df_kh = df[df[col_status].isin(["Active", "New"])].copy()
 
+    # =========================
+    # 🔥 THÊM: CHỌN PHÒNG BAN
+    # =========================
+    if "PHONG BAN" not in df_kh.columns:
+        st.error("❌ Không có cột PHONG BAN")
+        st.stop()
+
+    df_kh["PHONG BAN"] = df_kh["PHONG BAN"].astype("string").str.strip()
+
+    list_pb = sorted(df_kh["PHONG BAN"].dropna().unique())
+
+    selected_pb = st.selectbox(
+        "🏢 Chọn phòng ban",
+        ["Tất cả"] + list_pb
+    )
+
+    if selected_pb != "Tất cả":
+        df_kh = df_kh[df_kh["PHONG BAN"] == selected_pb]
+
+    # =========================
     # tìm cột tuổi
+    # =========================
     col_age = "NAM SINH"
     for col in df.columns:
         if "TUOI" in col.upper() or "AGE" in col.upper():
