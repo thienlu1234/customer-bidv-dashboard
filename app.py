@@ -1331,7 +1331,12 @@ elif menu == "👶  Độ tuổi":
 
     df_kh["PHONG BAN"] = df_kh["PHONG BAN"].astype("string").str.strip()
 
-    list_pb = sorted(df_kh["PHONG BAN"].dropna().unique())
+    list_pb = sorted(
+        df_kh["PHONG BAN"]
+        .dropna()
+        .loc[~df_kh["PHONG BAN"].str.contains("0x", na=False)]
+        .unique()
+    )
 
     col_f1, col_f2 = st.columns(2)
 
