@@ -405,23 +405,27 @@ if menu == "📊  Tổng quan":
     
     frozen = (df[col_status] == "Frozen").sum()
     dormant = (df[col_status] == "Dormant").sum()
-    nan_count = df[col_status].isna().sum()
+
+    # 🔥 GỘP NaN + rỗng vào Dormant
+    nan_count = df[col_status].isna().sum() + (df[col_status] == "").sum()
+    dormant = dormant + nan_count
 
     # ======================
     # KPI
     # ======================
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         kpi_card("👥 Tổng KH", f"{total:,}")
+
     with c2:
         kpi_card("🔥 Active", f"{active:,}")
+
     with c3:
         kpi_card("❄️ Frozen", f"{frozen:,}")
+
     with c4:
         kpi_card("😴 Dormant", f"{dormant:,}")
-    with c5:
-        kpi_card("❓ NaN", f"{nan_count:,}")
 
     # ======================
     # 🎯 BIỂU ĐỒ TRÒN XỊN
