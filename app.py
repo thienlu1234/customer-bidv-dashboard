@@ -602,8 +602,8 @@ elif menu == "🎯  HDVKKH_BQ":
     # FILTER DATA
     # =========================
     if option == "Tổng":
-    df_show = df_pb.copy()
-    tong_tien = tong_hdv_pb
+        df_show = df_pb.copy()
+        tong_tien = tong_hdv_pb
 
     elif option == "<5TR":
         df_show = df_pb[df_pb[col_hdv] <= 5_000_000]
