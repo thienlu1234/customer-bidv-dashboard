@@ -1430,17 +1430,17 @@ elif menu == "👶  Độ tuổi":
 
     with c2:
         kpi_card("💰 HDVKKH_BQ",
-            f"<span style='font-size:22px;color:#E6A700'>{tong_hdv_bq:,.0f}</span>"
+            f"<span style='font-size:22px;color:#0E6F66'>{tong_hdv_bq:,.0f}</span>"
         )
 
     with c3:
         kpi_card("💰 HDVCKH_CK",
-            f"<span style='font-size:22px;color:#E6A700'>{tong_hdv_ck:,.0f}</span>"
+            f"<span style='font-size:22px;color:#0E6F66'>{tong_hdv_ck:,.0f}</span>"
         )
 
     with c4:
         kpi_card("🏦 DNCK",
-            f"<span style='font-size:22px;color:#E6A700'>{tong_dnck:,.0f}</span>"
+            f"<span style='font-size:22px;color:#0E6F66'>{tong_dnck:,.0f}</span>"
         )
 
     with c5:
