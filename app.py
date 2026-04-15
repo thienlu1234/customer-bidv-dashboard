@@ -703,7 +703,7 @@ elif menu == "🎯  HDVKKH_BQ":
             f"<span style='font-size:26px;font-weight:bold;color:#E6A700'>{tong_tien:,.0f}</span>"
         )
 
-    st.success(f"👉 Phòng **{selected_pb}** - Nhóm **{option}** có **{len(df_show):,} khách hàng**")
+    
 
     
     # =========================
