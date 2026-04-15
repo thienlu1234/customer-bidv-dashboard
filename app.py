@@ -582,7 +582,7 @@ elif menu == "🎯  HDVKKH_BQ":
     # =========================
     # SELECT BOX NHÓM KH
     # =========================
-    st.markdown("### 📌 Chọn nhóm khách hàng")
+    
 
     option = st.selectbox(
         "Chọn nhóm",
