@@ -404,7 +404,7 @@ if menu == "📊  Tổng quan":
     # CHUẨN HÓA STATUS
     # ======================
     status_series = df[col_status].astype("string").str.strip()
-
+    st.write(status_series.value_counts(dropna=False))
     total = len(df)
 
     # Active gộp cả New
