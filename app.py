@@ -1632,7 +1632,7 @@ elif menu == "📌  Đo luong":
     # =========================
     st.markdown("### 👥 Số khách")
 
-    kpi_card("👥 Số người cần đo lường", f"{len(df_need):,}")
+    kpi_card("👥 Số khách THDL", f"{len(df_need):,}")
 
     # =========================
     # TABLE
