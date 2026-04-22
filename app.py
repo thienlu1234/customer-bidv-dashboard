@@ -1590,7 +1590,7 @@ elif menu == "📌  Đo luong":
         unsafe_allow_html=True
     )
 
-    col_measure = "TRANGTHAI_DOLUONG"
+    col_measure = "TRANG THAI_DOLUONG"
 
     if col_measure not in df.columns:
         st.error("❌ Không có cột TRANGTHAI_DOLUONG")
