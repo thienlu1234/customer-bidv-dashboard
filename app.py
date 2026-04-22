@@ -178,7 +178,7 @@ with col_logo:
     st.markdown(
         """
         <div style="
-            margin-top:-20px;
+            margin-top:-25px;
             margin-left:11px;
             font-size:18px;   /* 🔥 tăng size */
             color:#0E6F66;
