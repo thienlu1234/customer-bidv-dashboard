@@ -1583,24 +1583,49 @@ elif menu == "💼  Nghề nghiệp":
 # =========================
 # 📌 TRẠNG THÁI ĐO LƯỜNG
 # =========================
-elif menu == "📌  Đo luong":
+elif menu == "📌  Đo lường":
 
     st.markdown(
         '<div class="section-title">📌 Danh sách TRANGTHAI_DOLUONG</div>',
         unsafe_allow_html=True
     )
 
-    col_measure = "TRANG THAI_DOLUONG"
+    col_measure = "TRANGTHAI_DOLUONG"
 
     if col_measure not in df.columns:
         st.error("❌ Không có cột TRANGTHAI_DOLUONG")
         st.stop()
 
-    # convert về số
-    df[col_measure] = pd.to_numeric(df[col_measure], errors="coerce")
+    # =========================
+    # 🔥 CHỌN PHÒNG BAN
+    # =========================
+    if "PHONG BAN" not in df.columns:
+        st.error("❌ Không có cột PHONG BAN")
+        st.stop()
 
-    # 🔥 lấy những người có giá trị (==1)
-    df_need = df[df[col_measure] == 1].copy()
+    df["PHONG BAN"] = df["PHONG BAN"].astype(str).str.strip()
+
+    list_pb = ["Tất cả"] + sorted(
+        df["PHONG BAN"]
+        .dropna()
+        .loc[~df["PHONG BAN"].str.contains("0x", na=False)]  # bỏ rác
+        .unique()
+    )
+
+    selected_pb = st.selectbox("🏢 Chọn phòng ban", list_pb)
+
+    # lọc theo phòng ban
+    if selected_pb != "Tất cả":
+        df_filter = df[df["PHONG BAN"] == selected_pb].copy()
+    else:
+        df_filter = df.copy()
+
+    # =========================
+    # FILTER TRẠNG THÁI
+    # =========================
+    df_filter[col_measure] = pd.to_numeric(df_filter[col_measure], errors="coerce")
+
+    df_need = df_filter[df_filter[col_measure] == 1].copy()
 
     # =========================
     # KPI
