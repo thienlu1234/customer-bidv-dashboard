@@ -168,27 +168,28 @@ def kpi_card(title, value):
         <div class="kpi-value">{value}</div>
     </div>
     """, unsafe_allow_html=True)
-# LOGO
-col_logo, col_title = st.columns([1, 6])
+# ======================
+# HEADER (LOGO + TEXT CHUẨN)
+# ======================
+col_logo, col_title = st.columns([1.2, 5.8])
 
 with col_logo:
-    st.image("logo_bidv3.png", width=170)
+    st.markdown("""
+    <div style="display:flex; flex-direction:column; align-items:flex-start;">
+        
+        <img src="logo_bidv3.png" style="height:70px;">
 
-    st.markdown(
-        """
         <div style="
-            width:170px;
-            text-align:left;
-            font-size:13px;
+            margin-top:2px;
+            font-size:14px;
             color:#0E6F66;
-            margin-top:4px;
-            padding-left:2px;
+            font-weight:500;
         ">
             Chi nhánh Hà Tĩnh
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_title:
     st.markdown(
