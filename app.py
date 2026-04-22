@@ -170,25 +170,32 @@ def kpi_card(title, value):
     """, unsafe_allow_html=True)
 
 # ======================
-# HEADER (LOGO + TITLE)
+# HEADER (FIX LOGO KHÔNG BỊ CẮT)
 # ======================
-col_logo, col_title = st.columns([1.2, 5.8])
+st.markdown("""
+<div style="
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:10px;
+">
 
-with col_logo:
-    st.markdown(
-        """
-        <div style="padding: 8px 8px 8px 8px;">
-        """,
-        unsafe_allow_html=True
-    )
-    st.image("logo_bidv2.png", width=130)
-    st.markdown("</div>", unsafe_allow_html=True)
+    <img src="logo_bidv2.png"
+         style="
+            height:60px;
+            margin-left:12px;
+         ">
 
-with col_title:
-    st.markdown(
-        '<div class="main-title">Báo cáo tổng quan nền khách hàng mass tại chi nhánh</div>',
-        unsafe_allow_html=True
-    )
+    <div style="
+        font-size:32px;
+        font-weight:700;
+        color:#0E6F66;
+    ">
+        Báo cáo tổng quan nền khách hàng mass tại chi nhánh
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # ======================
 # MENU NGANG
