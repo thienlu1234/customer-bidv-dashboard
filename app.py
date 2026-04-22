@@ -275,7 +275,7 @@ if uploaded_file is not None:
     # 🔥 load 1 lần duy nhất
     st.session_state.df = load_data(uploaded_file)
 
-    st.success("✅ Đã upload dữ liệu")
+    
 
 
 # ======================
