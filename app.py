@@ -170,7 +170,7 @@ def kpi_card(title, value):
     """, unsafe_allow_html=True)
 
 # ======================
-# HEADER (FIX LOGO KHÔNG BỊ CẮT)
+# HEADER (FIX LOGO)
 # ======================
 st.markdown("""
 <div style="
