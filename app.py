@@ -178,7 +178,7 @@ with col_logo:
     st.markdown(
         """
         <div style="
-            margin-top:-25px;
+            margin-top:-35px;
             margin-left:11px;
             font-size:18px;   /* 🔥 tăng size */
             color:#0E6F66;
@@ -199,13 +199,6 @@ with col_title:
         unsafe_allow_html=True
     )
 
-with col_title:
-    st.markdown(
-        '<div style="font-size:32px;font-weight:700;color:#0E6F66;margin-top:10px">'
-        'Báo cáo tổng quan nền khách hàng mass tại chi nhánh'
-        '</div>',
-        unsafe_allow_html=True
-    )
 
 # ======================
 # MENU NGANG
