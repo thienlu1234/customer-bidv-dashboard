@@ -179,7 +179,7 @@ with col_logo:
         """
         <div style="
             margin-top:-18px;
-            margin-left:18px;
+            margin-left:13px;
             font-size:18px;   /* 🔥 tăng size */
             color:#0E6F66;
             font-weight:600;
