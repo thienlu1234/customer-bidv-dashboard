@@ -178,11 +178,13 @@ with col_logo:
     st.markdown(
         """
         <div style="
-            margin-top:-18px;   /* 🔥 giảm khoảng cách */
-            margin-left:8px;
-            font-size:14px;
+            margin-top:-18px;
+            margin-left:6px;
+            font-size:18px;   /* 🔥 tăng size */
             color:#0E6F66;
-            font-weight:500;
+            font-weight:600;
+            width:160px;      /* 🔥 ép chiều ngang theo logo */
+            text-align:justify;
         ">
             Chi nhánh Hà Tĩnh
         </div>
