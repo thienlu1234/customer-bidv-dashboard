@@ -178,7 +178,7 @@ with col_logo:
     st.markdown(
         """
         <div style="
-            margin-top:-8px;
+            margin-top:-18px;   /* 🔥 giảm khoảng cách */
             margin-left:8px;
             font-size:14px;
             color:#0E6F66;
@@ -189,7 +189,6 @@ with col_logo:
         """,
         unsafe_allow_html=True
     )
-
 with col_title:
     st.markdown(
         '<div style="font-size:32px;font-weight:700;color:#0E6F66;margin-top:10px">'
