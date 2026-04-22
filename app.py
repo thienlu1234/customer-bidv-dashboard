@@ -1583,7 +1583,7 @@ elif menu == "💼  Nghề nghiệp":
 # =========================
 # 📌 TRẠNG THÁI ĐO LƯỜNG
 # =========================
-elif menu == "📌  Đo lường":
+elif menu == "📌  Đo luong":
 
     st.markdown(
         '<div class="section-title">📌 Danh sách TRANGTHAI_DOLUONG</div>',
