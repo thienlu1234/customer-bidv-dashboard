@@ -172,10 +172,17 @@ def kpi_card(title, value):
 # ======================
 # HEADER (LOGO + TITLE)
 # ======================
-col_logo, col_title = st.columns([1, 6])
+col_logo, col_title = st.columns([1.2, 5.8])
 
 with col_logo:
-    st.image("logo_bidv2.png")
+    st.markdown(
+        """
+        <div style="padding: 8px 8px 8px 8px;">
+        """,
+        unsafe_allow_html=True
+    )
+    st.image("logo_bidv2.png", width=130)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col_title:
     st.markdown(
