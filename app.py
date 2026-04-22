@@ -188,7 +188,7 @@ with col_title:
 # ======================
 menu = option_menu(
     None,
-    ["📊  Tổng quan", "🎯  HDVKKH_BQ", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Cán bộ", "🏢  Phòng ban", "👶  Độ tuổi", "💼  Nghề nghiệp"],
+    ["📊  Tổng quan", "🎯  HDVKKH_BQ", "💰  HDVCKH_CK", "🏦  DNCK", "📈  Trung bình DV/người", "👨‍💼  Cán bộ", "🏢  Phòng ban", "👶  Độ tuổi", "💼  Nghề nghiệp", "📌  Đo luong"],
     
     orientation="horizontal",
     styles={
@@ -1578,6 +1578,47 @@ elif menu == "💼  Nghề nghiệp":
         height=500,
         hide_index=True
     
+    )
+
+# =========================
+# 📌 TRẠNG THÁI ĐO LƯỜNG
+# =========================
+elif menu == "📌  Đo luong":
+
+    st.markdown(
+        '<div class="section-title">📌 Danh sách TRANGTHAI_DOLUONG</div>',
+        unsafe_allow_html=True
+    )
+
+    col_measure = "TRANGTHAI_DOLUONG"
+
+    if col_measure not in df.columns:
+        st.error("❌ Không có cột TRANGTHAI_DOLUONG")
+        st.stop()
+
+    # convert về số
+    df[col_measure] = pd.to_numeric(df[col_measure], errors="coerce")
+
+    # 🔥 lấy những người có giá trị (==1)
+    df_need = df[df[col_measure] == 1].copy()
+
+    # =========================
+    # KPI
+    # =========================
+    st.markdown("### 👥 Số khách")
+
+    kpi_card("👥 Số người cần đo lường", f"{len(df_need):,}")
+
+    # =========================
+    # TABLE
+    # =========================
+    st.markdown("### 📋 Danh sách")
+
+    st.dataframe(
+        format_dataframe(df_need, col_customer, col_manager),
+        use_container_width=True,
+        height=600,
+        hide_index=True
     )
 else:
     st.info("👉 Upload file để bắt đầu")
