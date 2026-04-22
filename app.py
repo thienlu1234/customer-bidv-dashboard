@@ -257,7 +257,7 @@ with col1:
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        st.success("✅ Đã upload dữ liệu")
+        
 
 with col2:
     st.markdown("<br>", unsafe_allow_html=True)
