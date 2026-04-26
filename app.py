@@ -2,7 +2,10 @@ import streamlit as st
 import pandas as pd
 from streamlit_option_menu import option_menu
 import plotly.graph_objects as go
-import os 
+import os
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
 st.set_page_config(layout="wide")
 
 def find_column(df, keywords):
@@ -198,7 +201,46 @@ with col_title:
         '</div>',
         unsafe_allow_html=True
     )
+def create_pdf_report(total, active, frozen, dormant, chart_bytes):
 
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    # TIÊU ĐỀ
+    elements.append(Paragraph("BÁO CÁO TỔNG QUAN KHÁCH HÀNG", styles["Title"]))
+    elements.append(Spacer(1, 12))
+
+    # SỐ LIỆU
+    elements.append(Paragraph(f"Tổng KH: {total:,}", styles["Normal"]))
+    elements.append(Paragraph(f"Active: {active:,}", styles["Normal"]))
+    elements.append(Paragraph(f"Frozen: {frozen:,}", styles["Normal"]))
+    elements.append(Paragraph(f"Dormant: {dormant:,}", styles["Normal"]))
+
+    elements.append(Spacer(1, 20))
+
+    # BIỂU ĐỒ
+    img = io.BytesIO(chart_bytes)
+    elements.append(Image(img, width=400, height=250))
+
+    elements.append(Spacer(1, 20))
+
+    # NHẬN ĐỊNH
+    elements.append(Paragraph("Nhận định:", styles["Heading2"]))
+    elements.append(
+        Paragraph(
+            "Khách hàng đang tập trung chủ yếu ở nhóm Active.",
+            styles["Normal"]
+        )
+    )
+
+    doc.build(elements)
+
+    buffer.seek(0)
+    return buffer
 
 # ======================
 # MENU NGANG
@@ -521,6 +563,24 @@ if menu == "📊  Tổng quan":
         )
 
         st.plotly_chart(fig, use_container_width=True)
+        # ======================
+        # 🔥 TẠO ẢNH TỪ BIỂU ĐỒ
+        # ======================
+        img_bytes = fig.to_image(format="png")
+        pdf_file = create_pdf_report(
+            total=total,
+            active=active,
+            frozen=frozen,
+            dormant=dormant,
+            chart_bytes=img_bytes
+        )
+        
+        st.download_button(
+            label="📥 Tải báo cáo PDF",
+            data=pdf_file,
+            file_name="bao_cao.pdf",
+            mime="application/pdf"
+        )
 
 # =========================
 # 2. CHĂM SÓC KHÁCH HÀNG
