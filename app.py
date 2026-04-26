@@ -255,10 +255,7 @@ def create_pdf_report(total, active, frozen, dormant,
     title_style
     ))
     
-    elements.append(Paragraph(
-        "Chi nhánh Hà Tĩnh",
-        normal_style
-    ))
+    
 
     
 
