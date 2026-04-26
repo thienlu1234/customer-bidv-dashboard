@@ -623,9 +623,10 @@ if menu == "📊  Tổng quan":
     # 📊 TÍNH KPI TỪ DATA
     # ======================
     
-    # 👇 SỬA TÊN CỘT THEO FILE CỦA BẠN
-    so_phong_ban = df["PHONG_BAN"].nunique()
+    # Số phòng ban
+    so_phong_ban = df["PHONG BAN"].nunique()
     
+    # Tổng giá trị
     hdvkkh_bq = df["HDVKKH_BQ"].sum()
     hdvckh_ck = df["HDVCKH_CK"].sum()
     dnck = df["DNCK"].sum()
