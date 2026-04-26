@@ -258,6 +258,36 @@ def create_pdf_report(total, active, frozen, dormant,
     
 
     elements.append(Spacer(1, 15))
+
+                          
+    # ======================
+    # 📊 KPI TABLE
+    # ======================
+    elements.append(Paragraph("Tổng hợp khách hàng", title_style))
+    elements.append(Spacer(1, 10))                      
+    data = [
+        ["Tổng KH", f"{total:,}"],
+        ["Active", f"{active:,}"],
+        ["Frozen", f"{frozen:,}"],
+        ["Dormant", f"{dormant:,}"]
+    ]
+
+    table = Table(data, colWidths=[120, 120])
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), rl_colors.HexColor("#0E6F66")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), rl_colors.white),
+
+        ("BACKGROUND", (0, 1), (-1, -1), rl_colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.5, rl_colors.grey),
+
+        ("FONTNAME", (0, 0), (-1, -1), "DejaVu"),
+        ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
+    ]))
+
+    elements.append(table)
+
+    elements.append(Spacer(1, 20))                      
     # ======================
     # 📊 TỔNG HỢP CHỈ TIÊU
     # ======================
@@ -287,32 +317,7 @@ def create_pdf_report(total, active, frozen, dormant,
     elements.append(summary_table)
     elements.append(Spacer(1, 20))                      
 
-    # ======================
-    # 📊 KPI TABLE
-    # ======================
-    data = [
-        ["Tổng KH", f"{total:,}"],
-        ["Active", f"{active:,}"],
-        ["Frozen", f"{frozen:,}"],
-        ["Dormant", f"{dormant:,}"]
-    ]
-
-    table = Table(data, colWidths=[120, 120])
-
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), rl_colors.HexColor("#0E6F66")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), rl_colors.white),
-
-        ("BACKGROUND", (0, 1), (-1, -1), rl_colors.whitesmoke),
-        ("GRID", (0, 0), (-1, -1), 0.5, rl_colors.grey),
-
-        ("FONTNAME", (0, 0), (-1, -1), "DejaVu"),
-        ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
-    ]))
-
-    elements.append(table)
-
-    elements.append(Spacer(1, 20))
+    
 
     # ======================
     # 📈 CHART
