@@ -289,6 +289,15 @@ def create_pdf_report(total, active, frozen, dormant,
 
     elements.append(table)
 
+    elements.append(Spacer(1, 20))
+    # ======================
+    # 📈 CHART
+    # ======================
+    elements.append(Paragraph("Tỷ lệ khách hàng", title_style))
+
+    img = io.BytesIO(chart_bytes)
+    elements.append(Image(img, width=350, height=220))
+
     elements.append(Spacer(1, 20))                      
     # ======================
     # 📊 TỔNG HỢP CHỈ TIÊU
@@ -321,15 +330,7 @@ def create_pdf_report(total, active, frozen, dormant,
 
     
 
-    # ======================
-    # 📈 CHART
-    # ======================
-    elements.append(Paragraph("Tỷ lệ khách hàng", title_style))
-
-    img = io.BytesIO(chart_bytes)
-    elements.append(Image(img, width=350, height=220))
-
-    elements.append(Spacer(1, 20))
+    
 
     
     # ======================
