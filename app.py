@@ -224,7 +224,7 @@ def create_pdf_report(total, active, frozen, dormant, chart_bytes):
         fontSize=18,
         leading=22,
         alignment=1,  # center
-        textColor=colors.HexColor("#0E6F66"),
+        textColor=rl_rl_colors.HexColor("#0E6F66"),
         spaceAfter=10
     )
 
@@ -274,11 +274,11 @@ def create_pdf_report(total, active, frozen, dormant, chart_bytes):
     table = Table(data, colWidths=[120, 120])
 
     table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0E6F66")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("BACKGROUND", (0, 0), (-1, 0), rl_colors.HexColor("#0E6F66")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), rl_colors.white),
 
-        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("BACKGROUND", (0, 1), (-1, -1), rl_colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.5, rl_colors.grey),
 
         ("FONTNAME", (0, 0), (-1, -1), "DejaVu"),
         ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
