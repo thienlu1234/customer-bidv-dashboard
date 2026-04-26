@@ -3,7 +3,7 @@ import pandas as pd
 from streamlit_option_menu import option_menu
 import plotly.graph_objects as go
 import os
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors as rl_colors
