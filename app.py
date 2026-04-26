@@ -619,7 +619,16 @@ if menu == "📊  Tổng quan":
         kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
 
     
-
+    # ======================
+    # 📊 TÍNH KPI TỪ DATA
+    # ======================
+    
+    # 👇 SỬA TÊN CỘT THEO FILE CỦA BẠN
+    so_phong_ban = df["PHONG_BAN"].nunique()
+    
+    hdvkkh_bq = df["HDVKKH_BQ"].sum()
+    hdvckh_ck = df["HDVCKH_CK"].sum()
+    dnck = df["DNCK"].sum()
     # ======================
     # 🎯 BIỂU ĐỒ TRÒN
     # ======================
