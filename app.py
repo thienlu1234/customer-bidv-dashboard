@@ -329,16 +329,7 @@ def create_pdf_report(total, active, frozen, dormant,
 
     elements.append(Spacer(1, 20))
 
-    # ======================
-    # 📌 NHẬN XÉT
-    # ======================
-    elements.append(Paragraph("Nhận xét:", title_style))
-
-    elements.append(Paragraph(
-        "Khách hàng Active chiếm tỷ trọng cao, cần tiếp tục duy trì và phát triển.",
-        normal_style
-    ))
-
+    
     # ======================
     # BUILD
     # ======================
