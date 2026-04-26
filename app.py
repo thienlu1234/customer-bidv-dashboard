@@ -595,8 +595,17 @@ if menu == "📊  Tổng quan":
     tong_dnck = df[col_dnck].fillna(0).sum() if col_dnck in df else 0
     
     # ⭐ SỬA ĐÚNG Ở ĐÂY
-    tong_spdv = df[col_spdv].fillna(0).sum() if col_spdv in df else 0
-    tb_dv_kh = tong_spdv / total if total != 0 else 0
+    # 🔥 chỉ lấy Active + New
+    if "TRANGTHAI_KH" in df.columns:
+        df_kh = df[df["TRANGTHAI_KH"].isin(["Active", "New"])].copy()
+    else:
+        df_kh = df.copy()  # nếu chưa có STATUS thì giữ nguyên
+    
+    # tính đúng
+    tong_spdv = df_kh[col_spdv].fillna(0).sum()
+    total_kh = len(df_kh)
+    
+    tb_dv_kh = tong_spdv / total_kh if total_kh != 0 else 0
     
     # số phòng ban
     so_phong_ban = df["PHONG BAN"].nunique() if "PHONG BAN" in df.columns else 0
