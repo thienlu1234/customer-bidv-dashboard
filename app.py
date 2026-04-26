@@ -224,7 +224,7 @@ def create_pdf_report(total, active, frozen, dormant, chart_bytes):
         fontSize=18,
         leading=22,
         alignment=1,  # center
-        textColor=rl_rl_colors.HexColor("#0E6F66"),
+        textColor=rl_colors.HexColor("#0E6F66"),
         spaceAfter=10
     )
 
