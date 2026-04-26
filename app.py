@@ -576,7 +576,7 @@ if menu == "📊  Tổng quan":
     plt.savefig(buf, format="png")
     buf.seek(0)
     
-    img_bytes = buf
+    img_bytes = buf.getvalue()
     
     # ======================
     # 📄 TẠO PDF
