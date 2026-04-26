@@ -558,7 +558,7 @@ if menu == "📊  Tổng quan":
     # ======================
     # KPI CHÍNH
     # ======================
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
         kpi_card("👥 Tổng KH", f"{total:,}")
@@ -571,6 +571,8 @@ if menu == "📊  Tổng quan":
 
     with c4:
         kpi_card("😴 Dormant", f"{dormant:,}")
+    with c5:
+    kpi_card("📊 TB DV / KH", f"{tb_dv_kh:.2f}")    
 
     # ======================
     # 🔥 KPI BỔ SUNG (MỚI)
@@ -592,6 +594,7 @@ if menu == "📊  Tổng quan":
     tong_hdv_bq = df[col_hdv_bq].fillna(0).sum() if col_hdv_bq in df else 0
     tong_hdv_ck = df[col_hdv_ck].fillna(0).sum() if col_hdv_ck in df else 0
     tong_dnck = df[col_dnck].fillna(0).sum() if col_dnck in df else 0
+    tb_dv_kh = tong_dnck / total if total != 0 else 0
     
 
     
