@@ -519,12 +519,12 @@ if menu == "📊  Tổng quan":
     # 🎯 BIỂU ĐỒ TRÒN
     # ======================
     st.markdown("### 📊 Tỷ lệ khách hàng")
-
+    
     labels = ["Active", "Frozen", "Dormant"]
     values = [active, frozen, dormant]
-
+    
     col_left, col_center, col_right = st.columns([1, 2, 1])
-
+    
     with col_center:
         fig = go.Figure(data=[go.Pie(
             labels=labels,
@@ -532,19 +532,14 @@ if menu == "📊  Tổng quan":
             hole=0.55,
             pull=[0.06, 0, 0],
             marker=dict(
-                colors=[
-                    "#0E6F66",
-                    "#5DADE2",
-                    "#EC7063"
-                ],
+                colors=["#0E6F66", "#5DADE2", "#EC7063"],
                 line=dict(color="white", width=3)
             ),
             textinfo="percent",
             texttemplate="%{percent:.2%}",
             textfont=dict(size=18, color="white"),
-            hovertemplate="<b>%{label}</b><br>Số KH: %{value:,}<br>Tỷ lệ: %{percent}<extra></extra>"
         )])
-
+    
         fig.update_layout(
             showlegend=True,
             legend=dict(
@@ -561,26 +556,45 @@ if menu == "📊  Tổng quan":
                 showarrow=False
             )]
         )
-
+    
         st.plotly_chart(fig, use_container_width=True)
-        # ======================
-        # 🔥 TẠO ẢNH TỪ BIỂU ĐỒ
-        # ======================
-        img_bytes = fig.to_image(format="png")
-        pdf_file = create_pdf_report(
-            total=total,
-            active=active,
-            frozen=frozen,
-            dormant=dormant,
-            chart_bytes=img_bytes
-        )
-        
-        st.download_button(
-            label="📥 Tải báo cáo PDF",
-            data=pdf_file,
-            file_name="bao_cao.pdf",
-            mime="application/pdf"
-        )
+    
+    # ======================
+    # 🔥 TẠO ẢNH (KHÔNG DÙNG PLOTLY)
+    # ======================
+    import matplotlib.pyplot as plt
+    import io
+    
+    fig_mpl, ax = plt.subplots()
+    
+    colors = ["#0E6F66", "#5DADE2", "#EC7063"]
+    
+    ax.pie(values, labels=labels, autopct='%1.1f%%', colors=colors)
+    ax.set_title("Tỷ lệ khách hàng")
+    
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    
+    img_bytes = buf
+    
+    # ======================
+    # 📄 TẠO PDF
+    # ======================
+    pdf_file = create_pdf_report(
+        total=total,
+        active=active,
+        frozen=frozen,
+        dormant=dormant,
+        chart_bytes=img_bytes
+    )
+    
+    st.download_button(
+        label="📥 Tải báo cáo PDF",
+        data=pdf_file,
+        file_name="bao_cao.pdf",
+        mime="application/pdf"
+    )
 
 # =========================
 # 2. CHĂM SÓC KHÁCH HÀNG
