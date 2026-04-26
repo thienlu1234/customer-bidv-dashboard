@@ -6,6 +6,8 @@ import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 st.set_page_config(layout="wide")
 
 def find_column(df, keywords):
@@ -206,41 +208,114 @@ def create_pdf_report(total, active, frozen, dormant, chart_bytes):
     buffer = io.BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4)
-    styles = getSampleStyleSheet()
-
     elements = []
 
-    # TIÊU ĐỀ
-    elements.append(Paragraph("BÁO CÁO TỔNG QUAN KHÁCH HÀNG", styles["Title"]))
-    elements.append(Spacer(1, 12))
+    # ======================
+    # 🔥 FONT TIẾNG VIỆT
+    # ======================
+    pdfmetrics.registerFont(TTFont('DejaVu', 'DejaVuSans.ttf'))
 
-    # SỐ LIỆU
-    elements.append(Paragraph(f"Tổng KH: {total:,}", styles["Normal"]))
-    elements.append(Paragraph(f"Active: {active:,}", styles["Normal"]))
-    elements.append(Paragraph(f"Frozen: {frozen:,}", styles["Normal"]))
-    elements.append(Paragraph(f"Dormant: {dormant:,}", styles["Normal"]))
+    styles = getSampleStyleSheet()
 
-    elements.append(Spacer(1, 20))
-
-    # BIỂU ĐỒ
-    img = io.BytesIO(chart_bytes)
-    elements.append(Image(img, width=400, height=250))
-
-    elements.append(Spacer(1, 20))
-
-    # NHẬN ĐỊNH
-    elements.append(Paragraph("Nhận định:", styles["Heading2"]))
-    elements.append(
-        Paragraph(
-            "Khách hàng đang tập trung chủ yếu ở nhóm Active.",
-            styles["Normal"]
-        )
+    title_style = ParagraphStyle(
+        name='Title',
+        fontName='DejaVu',
+        fontSize=18,
+        leading=22,
+        alignment=1,  # center
+        textColor=colors.HexColor("#0E6F66"),
+        spaceAfter=10
     )
 
+    normal_style = ParagraphStyle(
+        name='Normal',
+        fontName='DejaVu',
+        fontSize=11,
+        leading=14
+    )
+
+    # ======================
+    # 🏦 LOGO
+    # ======================
+    try:
+        logo = Image("logo_bidv3.png", width=120, height=40)
+        elements.append(logo)
+    except:
+        pass
+
+    elements.append(Spacer(1, 10))
+
+    # ======================
+    # 📌 TITLE
+    # ======================
+    elements.append(Paragraph(
+        "BÁO CÁO TỔNG QUAN KHÁCH HÀNG",
+        title_style
+    ))
+
+    elements.append(Paragraph(
+        "Chi nhánh Hà Tĩnh",
+        normal_style
+    ))
+
+    elements.append(Spacer(1, 15))
+
+    # ======================
+    # 📊 KPI TABLE
+    # ======================
+    data = [
+        ["Tổng KH", f"{total:,}"],
+        ["Active", f"{active:,}"],
+        ["Frozen", f"{frozen:,}"],
+        ["Dormant", f"{dormant:,}"]
+    ]
+
+    table = Table(data, colWidths=[120, 120])
+
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0E6F66")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+
+        ("FONTNAME", (0, 0), (-1, -1), "DejaVu"),
+        ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
+    ]))
+
+    elements.append(table)
+
+    elements.append(Spacer(1, 20))
+
+    # ======================
+    # 📈 CHART
+    # ======================
+    elements.append(Paragraph("Tỷ lệ khách hàng", title_style))
+
+    img = io.BytesIO(chart_bytes)
+    elements.append(Image(img, width=350, height=220))
+
+    elements.append(Spacer(1, 20))
+
+    # ======================
+    # 📌 NHẬN XÉT
+    # ======================
+    elements.append(Paragraph("Nhận xét:", title_style))
+
+    elements.append(Paragraph(
+        "Khách hàng Active chiếm tỷ trọng cao, cần tiếp tục duy trì và phát triển.",
+        normal_style
+    ))
+
+    # ======================
+    # BUILD
+    # ======================
     doc.build(elements)
 
-    buffer.seek(0)
-    return buffer
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return pdf
 
 # ======================
 # MENU NGANG
