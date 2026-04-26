@@ -617,13 +617,13 @@ if menu == "📊  Tổng quan":
         kpi_card("🏢 Số phòng ban", f"{so_phong_ban:,}")
     
     with c2:
-        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq:,.0f}")
-    
+        kpi_card("💰 HDVKKH_BQ", f"{tong_hdv_bq/1e9:,.1f} tỷ")
+
     with c3:
-        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck:,.0f}")
+        kpi_card("💰 HDVCKH_CK", f"{tong_hdv_ck/1e9:,.1f} tỷ")
     
     with c4:
-        kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
+        kpi_card("🏦 DNCK", f"{tong_dnck/1e9:,.1f} tỷ")
     
     with c5:
         kpi_card("📊 TB DV / KH", f"{tb_dv_kh:.2f}")
