@@ -204,8 +204,9 @@ with col_title:
         '</div>',
         unsafe_allow_html=True
     )
-def create_pdf_report(total, active, frozen, dormant, chart_bytes):
-
+def create_pdf_report(total, active, frozen, dormant,
+                      so_phong_ban, hdvkkh_bq, hdvckh_ck, dnck,
+                      chart_bytes):
     buffer = io.BytesIO()
 
     doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -260,6 +261,34 @@ def create_pdf_report(total, active, frozen, dormant, chart_bytes):
     ))
 
     elements.append(Spacer(1, 15))
+    # ======================
+    # 📊 TỔNG HỢP CHỈ TIÊU
+    # ======================
+    elements.append(Paragraph("Tổng hợp chỉ tiêu", title_style))
+    elements.append(Spacer(1, 10))
+    
+    summary_data = [
+        ["Số phòng ban", f"{so_phong_ban:,}"],
+        ["HDVKKH_BQ", f"{hdvkkh_bq:,}"],
+        ["HDVCKH_CK", f"{hdvckh_ck:,}"],
+        ["DNCK", f"{dnck:,}"]
+    ]
+    
+    summary_table = Table(summary_data, colWidths=[150, 180])
+    
+    summary_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), rl_colors.HexColor("#0E6F66")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), rl_colors.white),
+    
+        ("BACKGROUND", (0, 1), (-1, -1), rl_colors.whitesmoke),
+        ("GRID", (0, 0), (-1, -1), 0.5, rl_colors.grey),
+    
+        ("FONTNAME", (0, 0), (-1, -1), "DejaVu"),
+        ("ALIGN", (1, 0), (-1, -1), "RIGHT"),
+    ]))
+    
+    elements.append(summary_table)
+    elements.append(Spacer(1, 20))                      
 
     # ======================
     # 📊 KPI TABLE
@@ -662,6 +691,10 @@ if menu == "📊  Tổng quan":
         active=active,
         frozen=frozen,
         dormant=dormant,
+        so_phong_ban=so_phong_ban,
+        hdvkkh_bq=hdvkkh_bq,
+        hdvckh_ck=hdvckh_ck,
+        dnck=dnck,
         chart_bytes=img_bytes
     )
     
