@@ -558,7 +558,7 @@ if menu == "📊  Tổng quan":
     # ======================
     # KPI CHÍNH
     # ======================
-    c1, c2, c3, c4, c5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         kpi_card("👥 Tổng KH", f"{total:,}")
@@ -602,7 +602,7 @@ if menu == "📊  Tổng quan":
     so_phong_ban = df["PHONG BAN"].nunique() if "PHONG BAN" in df.columns else 0
 
     # ====== HIỂN THỊ ======
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
         kpi_card("🏢 Số phòng ban", f"{so_phong_ban:,}")
