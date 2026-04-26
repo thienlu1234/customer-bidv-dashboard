@@ -251,8 +251,13 @@ def create_pdf_report(total, active, frozen, dormant,
     # 📌 TITLE
     # ======================
     elements.append(Paragraph(
-        "Báo cáo tổng quan nền khách hàng mass tại chi nhánh",
-        title_style
+    "BÁO CÁO TỔNG QUAN KHÁCH HÀNG MASS",
+    title_style
+    ))
+    
+    elements.append(Paragraph(
+        "Chi nhánh Hà Tĩnh",
+        normal_style
     ))
 
     
