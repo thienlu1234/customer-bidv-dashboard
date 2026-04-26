@@ -607,7 +607,7 @@ if menu == "📊  Tổng quan":
             hole=0.55,
             pull=[0.06, 0, 0],
             marker=dict(
-                chart_colors=["#0E6F66", "#5DADE2", "#EC7063"],
+                colors=["#0E6F66", "#5DADE2", "#EC7063"],
                 line=dict(color="white", width=3)
             ),
             textinfo="percent",
