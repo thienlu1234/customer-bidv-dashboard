@@ -1014,7 +1014,7 @@ elif menu == "🏦  DNCK":
         kpi_card("🏦 Số khách DNCK", f"{len(df_dnck):,}")
     
     with c2:
-        kpi_card("💰 Tổng DNCK (VND)", f"{tong_dnck:,.0f}")
+        kpi_card("💰 Tổng DNCK", f"{tong_dnck:,.0f}")
     
     # =========================
     # DATA TABLE
