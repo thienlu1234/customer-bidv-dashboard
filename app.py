@@ -644,7 +644,7 @@ if menu == "📊  Tổng quan":
     
     chart_colors = ["#0E6F66", "#5DADE2", "#EC7063"]
     
-    ax.pie(values, labels=labels, autopct='%1.1f%%', colors=colors)
+    ax.pie(values, labels=labels, autopct='%1.1f%%', colors=chart_colors)
     ax.set_title("Tỷ lệ khách hàng")
     
     buf = io.BytesIO()
