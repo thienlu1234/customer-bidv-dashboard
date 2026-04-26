@@ -607,7 +607,7 @@ if menu == "📊  Tổng quan":
             hole=0.55,
             pull=[0.06, 0, 0],
             marker=dict(
-                colors=["#0E6F66", "#5DADE2", "#EC7063"],
+                chart_colors=["#0E6F66", "#5DADE2", "#EC7063"],
                 line=dict(color="white", width=3)
             ),
             textinfo="percent",
@@ -642,7 +642,7 @@ if menu == "📊  Tổng quan":
     
     fig_mpl, ax = plt.subplots()
     
-    colors = ["#0E6F66", "#5DADE2", "#EC7063"]
+    chart_colors = ["#0E6F66", "#5DADE2", "#EC7063"]
     
     ax.pie(values, labels=labels, autopct='%1.1f%%', colors=colors)
     ax.set_title("Tỷ lệ khách hàng")
