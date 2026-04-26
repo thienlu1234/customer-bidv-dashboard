@@ -571,8 +571,7 @@ if menu == "📊  Tổng quan":
 
     with c4:
         kpi_card("😴 Dormant", f"{dormant:,}")
-    with c5:
-    kpi_card("📊 TB DV / KH", f"{tb_dv_kh:.2f}")    
+        
 
     # ======================
     # 🔥 KPI BỔ SUNG (MỚI)
@@ -616,7 +615,8 @@ if menu == "📊  Tổng quan":
 
     with c4:
         kpi_card("🏦 DNCK", f"{tong_dnck:,.0f}")
-
+    with c5:
+        kpi_card("📊 TB DV / KH", f"{tb_dv_kh:.2f}")
     
     # ======================
     # 📊 TÍNH KPI TỪ DATA
